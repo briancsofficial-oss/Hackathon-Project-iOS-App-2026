@@ -1,20 +1,9 @@
-//
-//  OverviewCharts.swift
-//  Smart Flow
-//
-// The other first-glance chart on the Overview tab (the cash-flow pie is in CashSplitChart.swift):
-//   CashRunwayCard  = how many months of fixed costs the cash in the bank covers, on a 0–6+ month bar
-//                     with the 3- and 6-month targets marked
-// It is drawn with plain shapes, so it works on iOS 15.
-
 import SwiftUI
-
-// MARK: - Cash runway
 
 struct CashRunwayCard: View {
     let profile: BusinessProfile
     private var m: BusinessMetrics { BusinessMetrics(p: profile) }
-    private let scaleMonths = 6.0   // the bar's right end
+    private let scaleMonths = 6.0
 
     init(profile: BusinessProfile) { self.profile = profile }
 
@@ -53,7 +42,6 @@ struct CashRunwayCard: View {
         .accessibilityElement(children: .combine)
     }
 
-    // A horizontal bar from 0 to 6+ months, filled to the current value, with ticks at 3 and 6.
     private func meter(months: Double) -> some View {
         VStack(spacing: 4) {
             GeometryReader { geo in
@@ -82,7 +70,6 @@ struct CashRunwayCard: View {
     }
 }
 
-// Status pill with an icon, so the rating never relies on color alone.
 func ratingBadge(_ rating: BusinessRating) -> some View {
     let icon: String
     switch rating {

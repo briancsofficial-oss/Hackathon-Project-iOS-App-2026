@@ -1,14 +1,3 @@
-//
-//  CashSplitChart.swift
-//  Smart Flow
-//
-// The pie chart at the top of the Overview tab: this month's income split into expenses
-// and the cash left over, with the left-over amount in the middle so it's readable at a glance.
-//   CashSlice      = one slice (cost of goods, payroll, operating costs, debt payments, cash left over)
-//   CashSplitCard  = the whole card: donut, legend, income / expenses / left over
-//   CashDonut      = the ring itself
-// The numbers come from BusinessMetrics (BusinessProfile.swift), the same math as the Results tab.
-
 import SwiftUI
 
 struct CashSlice: Identifiable {
@@ -23,21 +12,17 @@ struct CashSlice: Identifiable {
     let amount: Double
     var id: Kind { kind }
 
-    // Each kind keeps the same color no matter which slices are showing.
-    // These light/dark pairs were checked for color-blind separation. Several are light on a white
-    // background, so every slice also has a labeled legend row with its amount (color is never the only cue).
     var color: Color {
         switch kind {
-        case .cogs:      return dynamicColor(light: 0x2A78D6, dark: 0x3987E5)   // blue
-        case .payroll:   return dynamicColor(light: 0xEB6834, dark: 0xD95926)   // orange
-        case .operating: return dynamicColor(light: 0x1BAF7A, dark: 0x199E70)   // aqua
-        case .debt:      return dynamicColor(light: 0xEDA100, dark: 0xC98500)   // yellow
-        case .leftOver:  return dynamicColor(light: 0xE87BA4, dark: 0xD55181)   // magenta
+        case .cogs:      return dynamicColor(light: 0x2A78D6, dark: 0x3987E5)
+        case .payroll:   return dynamicColor(light: 0xEB6834, dark: 0xD95926)
+        case .operating: return dynamicColor(light: 0x1BAF7A, dark: 0x199E70)
+        case .debt:      return dynamicColor(light: 0xEDA100, dark: 0xC98500)
+        case .leftOver:  return dynamicColor(light: 0xE87BA4, dark: 0xD55181)
         }
     }
 }
 
-// A color from hex values, with separate light and Dark Mode versions. Also used by OverviewCharts.swift.
 func dynamicColor(light: UInt32, dark: UInt32) -> Color {
     func ui(_ hex: UInt32) -> UIColor {
         UIColor(red: CGFloat((hex >> 16) & 0xFF) / 255, green: CGFloat((hex >> 8) & 0xFF) / 255,
@@ -48,12 +33,9 @@ func dynamicColor(light: UInt32, dark: UInt32) -> Color {
 
 struct CashSplitCard: View {
     let profile: BusinessProfile
-    // Called by the "Start the AI interview" button when there's nothing to chart yet.
     let onStart: () -> Void
-    // The slice picked in the legend (nil = none). Tapping highlights it and shows it in the middle.
     @State private var focused: CashSlice.Kind?
 
-    // Written out because the private state above would otherwise hide the automatic initializer from other files.
     init(profile: BusinessProfile, onStart: @escaping () -> Void) {
         self.profile = profile
         self.onStart = onStart
@@ -62,10 +44,8 @@ struct CashSplitCard: View {
     private var m: BusinessMetrics { BusinessMetrics(p: profile) }
     private var income: Double { m.monthlyRevenue + profile[.otherIncome] }
     private var expenses: Double { m.monthlyCOGS + m.payrollCost + m.operatingCost + m.debtService }
-    private var leftOver: Double { income - expenses }   // same as BusinessMetrics.netCashFlow
+    private var leftOver: Double { income - expenses }
 
-    // With cash left over, the full circle = income. When spending is bigger than income,
-    // the full circle = expenses, and there's no left-over slice.
     private var slices: [CashSlice] {
         [
             CashSlice(kind: .cogs, amount: m.monthlyCOGS),
@@ -127,7 +107,6 @@ struct CashSplitCard: View {
         }
     }
 
-    // Middle of the donut: the cash left over, or the slice picked in the legend.
     private var centerLabel: some View {
         VStack(spacing: 2) {
             if let kind = focused, let slice = slices.first(where: { $0.kind == kind }) {
@@ -217,20 +196,17 @@ struct CashSplitCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // Share of the circle, e.g. "32%".
     private func percent(_ amount: Double) -> String {
         guard pieTotal > 0 else { return "0%" }
         return "\(Int((amount / pieTotal * 100).rounded()))%"
     }
 
-    // What VoiceOver reads for the chart.
     private var accessibilitySummary: String {
         let parts = slices.map { "\($0.kind.rawValue) \(money($0.amount))" }.joined(separator: ", ")
         let lead = leftOver >= 0 ? "Cash left over \(money(leftOver)) a month" : "Short by \(money(-leftOver)) a month"
         return "\(lead). Monthly income \(money(income)). \(parts)."
     }
 
-    // Short amounts for the middle of the donut: $850, $4.2K, $38K, $1.2M.
     private func compactMoney(_ value: Double) -> String {
         let v = abs(value)
         if v >= 1_000_000 { return "$" + String(format: "%.1fM", v / 1_000_000) }
@@ -240,7 +216,6 @@ struct CashSplitCard: View {
     }
 }
 
-// The ring, drawn with trimmed circles so it works on iOS 15 (Swift Charts' pie chart needs iOS 17).
 struct CashDonut: View {
     let slices: [CashSlice]
     let total: Double
@@ -253,7 +228,6 @@ struct CashDonut: View {
         self.focused = focused
     }
 
-    // Start and end of each slice as fractions of the full circle (0 to 1).
     private struct Segment: Identifiable {
         let slice: CashSlice
         let start: Double
@@ -276,10 +250,8 @@ struct CashDonut: View {
     var body: some View {
         GeometryReader { geo in
             let size = min(geo.size.width, geo.size.height)
-            // The ring sits inside the frame, leaving room for a highlighted slice to grow.
             let inset = lineWidth / 2 + 4
             let circumference = Double.pi * Double(size - inset * 2)
-            // A 2-point gap between slices so neighbors stay distinct (only when there's more than one).
             let gap = slices.count > 1 && circumference > 0 ? 2 / circumference : 0
 
             ZStack {
@@ -292,7 +264,7 @@ struct CashDonut: View {
                         .opacity(focused == nil || focused == seg.slice.kind ? 1 : 0.35)
                 }
             }
-            .rotationEffect(.degrees(-90))   // first slice starts at 12 o'clock
+            .rotationEffect(.degrees(-90))
             .padding(inset)
             .frame(width: size, height: size)
         }

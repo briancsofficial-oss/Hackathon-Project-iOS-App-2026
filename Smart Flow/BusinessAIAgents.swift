@@ -1,27 +1,10 @@
-//
-//  BusinessAIAgents.swift
-//  Smart Flow
-//
-// The three AI features of the Business checkup, all on OpenAI (models are chosen in AIServices.swift):
-//   BusinessInterviewAgent  = chats with the owner phase by phase and SAVES each answer by
-//                             calling the record_answers function, so the chat fills in the same
-//                             BusinessProfile the question form uses.
-//   BusinessDocumentReader  = reads a P&L, bank statement or payroll report and suggests answers.
-//   BusinessPlanWriter      = writes an action plan from the answers + BusinessMetrics.
-//
-// The AI never does the health math. BusinessMetrics calculates DSCR, runway, etc. in Swift,
-// and the models only see the results, so the numbers on screen are always the app's own.
-
 import Foundation
 
-// One chat bubble in the interview.
 struct BusinessChatLine: Identifiable, Equatable {
     let id = UUID()
     let fromUser: Bool
     let text: String
 }
-
-// MARK: - Interview agent (OpenAI)
 
 @MainActor
 final class BusinessInterviewAgent: ObservableObject {
@@ -29,7 +12,6 @@ final class BusinessInterviewAgent: ObservableObject {
     @Published private(set) var isThinking = false
     @Published private(set) var isFinished = false
     @Published var errorText: String?
-    // Fields saved by the most recent reply, shown as a small "Saved: …" note under it.
     @Published private(set) var lastSaved: [BusinessField] = []
 
     private let store: BusinessStore
@@ -42,7 +24,6 @@ final class BusinessInterviewAgent: ObservableObject {
 
     var hasStarted: Bool { !lines.isEmpty || isThinking }
 
-    // Opens the interview: the agent says hello and asks the first unanswered question.
     func start() {
         guard !hasStarted else { return }
         run(userText: "Hi, I'm ready to start the business checkup.", showInChat: false)
@@ -54,7 +35,6 @@ final class BusinessInterviewAgent: ObservableObject {
         run(userText: trimmed, showInChat: true)
     }
 
-    // Tries the last message again after an error (network down, bad key fixed, etc.).
     func retry() {
         guard let text = lastUserText, !isThinking else { return }
         run(userText: text, showInChat: false)
@@ -79,7 +59,6 @@ final class BusinessInterviewAgent: ObservableObject {
                 try await converse(firstInput: userText)
             } catch {
                 errorText = error.localizedDescription
-                // If OpenAI lost the thread, start a fresh one next time (answers are already saved locally).
                 if case AIError.server(_, let status, _) = error, status == 400 || status == 404 {
                     previousResponseID = nil
                 }
@@ -88,13 +67,11 @@ final class BusinessInterviewAgent: ObservableObject {
         }
     }
 
-    // One user turn. The model may call functions several times before it writes its reply,
-    // so this loops: run the functions, send their results back, until it answers in words.
     private func converse(firstInput: String) async throws {
         var input: Any = firstInput
         var saved: [BusinessField] = []
 
-        for _ in 0..<6 {   // safety cap so a confused model can't loop forever
+        for _ in 0..<6 {
             let reply = try await OpenAIClient.respond(instructions: instructions,
                                                        input: input,
                                                        tools: Self.tools,
@@ -116,7 +93,6 @@ final class BusinessInterviewAgent: ObservableObject {
         lastSaved = saved
     }
 
-    // Runs one function the model asked for and returns a short JSON string describing what happened.
     private func handle(_ call: OpenAIToolCall, saved: inout [BusinessField]) -> String {
         switch call.name {
         case "record_answers":
@@ -148,7 +124,6 @@ final class BusinessInterviewAgent: ObservableObject {
         }
     }
 
-    // Rebuilt every turn, so the model always sees what's saved and what's still missing.
     private var instructions: String {
         let profile = store.profile
         let progress = BusinessPhase.allCases.map { phase -> String in
@@ -187,10 +162,6 @@ final class BusinessInterviewAgent: ObservableObject {
         """
     }
 
-    // MARK: Function definitions sent to OpenAI
-
-    // record_answers has one property per BusinessField. Strict mode needs every property listed as
-    // required, so each one is nullable and the model sends null for anything it didn't learn.
     private static let tools: [[String: Any]] = {
         var properties: [String: Any] = [:]
         for field in BusinessField.allCases {
@@ -205,7 +176,7 @@ final class BusinessInterviewAgent: ObservableObject {
                 schema["type"] = ["string", "null"]
             case .choice(let options):
                 schema["type"] = ["string", "null"]
-                schema["enum"] = (options as [Any]) + [NSNull()]   // null = "not learned yet"
+                schema["enum"] = (options as [Any]) + [NSNull()]
             case .yesNo:
                 schema["type"] = ["boolean", "null"]
             }
@@ -247,9 +218,6 @@ final class BusinessInterviewAgent: ObservableObject {
     }
 }
 
-// MARK: - Document reader (OpenAI, structured output)
-
-// What the AI found in one document. The user reviews these before anything is saved.
 struct DocumentFindings {
     let documentType: String
     let notes: String
@@ -257,7 +225,6 @@ struct DocumentFindings {
 }
 
 enum BusinessDocumentReader {
-    // Only number questions can come from a document (it can't know your goals).
     private static var readableFields: [BusinessField] {
         BusinessField.allCases.filter { $0.kind.isNumber && $0.phase != .goals }
     }
@@ -267,8 +234,6 @@ enum BusinessDocumentReader {
             "document_type": ["type": "string", "description": "e.g. Profit and loss statement, Bank statement, Payroll register, Balance sheet"],
             "notes": ["type": "string", "description": "One or two sentences: the period covered and any caveats."],
         ]
-        // Strict mode needs every property listed as required, so each figure is nullable:
-        // the model sends null for anything the document doesn't show.
         for field in readableFields {
             properties[field.rawValue] = ["type": ["number", "null"], "description": field.question + " " + field.hint]
         }
@@ -301,7 +266,7 @@ enum BusinessDocumentReader {
 
         var values: [(field: BusinessField, value: Double)] = []
         for field in readableFields {
-            var probe = BusinessProfile()   // reuse the same validation the form uses
+            var probe = BusinessProfile()
             if probe.set(field, from: json[field.rawValue]) {
                 values.append((field: field, value: probe[field]))
             }
@@ -311,8 +276,6 @@ enum BusinessDocumentReader {
                                 values: values)
     }
 }
-
-// MARK: - Action plan writer (OpenAI)
 
 enum BusinessPlanWriter {
     static func write(for profile: BusinessProfile) async throws -> String {

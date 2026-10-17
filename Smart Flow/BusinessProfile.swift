@@ -1,22 +1,4 @@
-//
-//  BusinessProfile.swift
-//  Smart Flow
-//
-// BUSINESS CHECKUP: the data side. The whole app is built around this (see the tabs in ContentView.swift).
-// It asks about revenue, payroll, operating costs, business debt, cash and goals,
-// then works out lender-style health numbers.
-//
-//   BusinessPhase     = the 6 phases of questions, in order
-//   BusinessField     = every single question: its wording, hint, phase and what kind of answer it takes.
-//                       The question form, the AI interviewer and the document import are ALL built from this
-//                       one list, so adding a question here adds it everywhere.
-//   BusinessProfile   = the answers (saved on the phone)
-//   BusinessStore     = shares the answers between screens and saves them
-//   BusinessMetrics   = the math: DSCR, cash runway, payroll %, current ratio, etc.
-
 import SwiftUI
-
-// MARK: - Phases
 
 enum BusinessPhase: Int, CaseIterable, Identifiable, Codable {
     case revenue, payroll, operating, debt, liquidity, goals
@@ -33,7 +15,6 @@ enum BusinessPhase: Int, CaseIterable, Identifiable, Codable {
         }
     }
 
-    // One line shown under the phase title, explaining why we ask.
     var purpose: String {
         switch self {
         case .revenue:   return "What the business brings in, and how steady it is."
@@ -57,15 +38,12 @@ enum BusinessPhase: Int, CaseIterable, Identifiable, Codable {
     }
 }
 
-// MARK: - Questions
-
-// What kind of answer a question takes. This decides the input box AND the type the AI is told to send.
 enum FieldKind {
-    case money(suffix: String)     // dollars, e.g. suffix "/ mo"
-    case percent                   // 0 to 100
-    case count(unit: String)       // whole number, e.g. "people"
+    case money(suffix: String)
+    case percent
+    case count(unit: String)
     case text
-    case choice([String])          // pick one from a list
+    case choice([String])
     case yesNo
 
     var isNumber: Bool {
@@ -76,9 +54,7 @@ enum FieldKind {
     }
 }
 
-// Every question in the checkup. rawValue = the key used for saving and for the AI tools (snake_case on purpose).
 enum BusinessField: String, CaseIterable, Identifiable {
-    // Phase 1: Revenue & Income
     case businessName = "business_name"
     case industry = "industry"
     case entityType = "entity_type"
@@ -89,7 +65,6 @@ enum BusinessField: String, CaseIterable, Identifiable {
     case isSeasonal = "is_seasonal"
     case slowMonthRevenue = "slowest_month_revenue"
     case otherIncome = "other_monthly_income"
-    // Phase 2: Payroll & People
     case w2Employees = "w2_employees"
     case contractors = "contractors"
     case payrollFrequency = "payroll_frequency"
@@ -97,12 +72,10 @@ enum BusinessField: String, CaseIterable, Identifiable {
     case employerCosts = "monthly_employer_taxes_benefits"
     case contractorPay = "monthly_contractor_pay"
     case ownerPay = "monthly_owner_pay"
-    // Phase 3: Operating Costs
     case rent = "monthly_rent"
     case insurance = "monthly_insurance"
     case softwareMarketing = "monthly_software_marketing"
     case otherOperating = "monthly_other_operating"
-    // Phase 4: Business Debt
     case termLoanPayment = "monthly_term_loan_payment"
     case termLoanBalance = "term_loan_balance"
     case locBalance = "line_of_credit_balance"
@@ -114,14 +87,12 @@ enum BusinessField: String, CaseIterable, Identifiable {
     case mcaPayment = "monthly_mca_payment"
     case owesBackTaxes = "owes_back_taxes"
     case backTaxesOwed = "back_taxes_owed"
-    // Phase 5: Cash & Working Capital
     case cashOnHand = "cash_on_hand"
     case accountsReceivable = "accounts_receivable"
     case daysToGetPaid = "days_to_get_paid"
     case accountsPayable = "accounts_payable"
     case inventoryValue = "inventory_value"
     case taxReserve = "tax_reserve"
-    // Phase 6: Goals & Horizon
     case primaryFocus = "primary_focus"
     case timeline = "goal_timeline"
 
@@ -268,8 +239,6 @@ enum BusinessField: String, CaseIterable, Identifiable {
         }
     }
 
-    // Follow-up questions that only apply when the parent answer is "Yes" (or, for the line of credit,
-    // when there is a limit). Hidden from the form and not required otherwise.
     var dependsOn: BusinessField? {
         switch self {
         case .slowMonthRevenue: return .isSeasonal
@@ -281,7 +250,6 @@ enum BusinessField: String, CaseIterable, Identifiable {
         }
     }
 
-    // Answers that aren't needed to call a phase finished.
     var isOptional: Bool {
         switch self {
         case .businessName, .industry, .recurringPercent, .inventoryValue, .taxReserve: return true
@@ -303,15 +271,10 @@ enum BusinessFocus: String, CaseIterable {
     case exit = "Prepare to sell the business"
 }
 
-// MARK: - Answers
-
-// All answers. Numbers and text are kept in two dictionaries keyed by BusinessField.rawValue,
-// so a missing key means "not answered yet" (which is different from answering 0).
 struct BusinessProfile: Codable, Equatable {
     var numbers: [String: Double] = [:]
     var texts: [String: String] = [:]
 
-    // Reads a number; unanswered counts as 0 in the math.
     subscript(_ field: BusinessField) -> Double {
         numbers[field.rawValue] ?? 0
     }
@@ -322,14 +285,12 @@ struct BusinessProfile: Codable, Equatable {
         field.kind.isNumber ? numbers[field.rawValue] != nil : !(texts[field.rawValue] ?? "").isEmpty
     }
 
-    // Whether a question should be asked right now (follow-ups only when their parent says so).
     func applies(_ field: BusinessField) -> Bool {
         guard let parent = field.dependsOn else { return true }
         if parent.kind.isNumber { return self[parent] > 0 }
         return text(parent) == "Yes"
     }
 
-    // Required questions that still need an answer.
     func missing(in phase: BusinessPhase) -> [BusinessField] {
         BusinessField.fields(in: phase).filter { !$0.isOptional && applies($0) && !isAnswered($0) }
     }
@@ -344,8 +305,6 @@ struct BusinessProfile: Codable, Equatable {
         return name.isEmpty ? "Your business" : name
     }
 
-    // Sets one answer from any source (form, AI interviewer, document import).
-    // Returns false if the value doesn't fit the question, so bad AI output is ignored instead of saved.
     @discardableResult
     mutating func set(_ field: BusinessField, from value: Any?) -> Bool {
         guard let value = value, !(value is NSNull) else { return false }
@@ -363,7 +322,6 @@ struct BusinessProfile: Codable, Equatable {
             guard let s = value as? String, !s.trimmingCharacters(in: .whitespaces).isEmpty else { return false }
             texts[field.rawValue] = s
         case .choice(let options):
-            // Accept the option even if the AI changed capitalization.
             guard let s = value as? String,
                   let match = options.first(where: { $0.lowercased() == s.lowercased() }) else { return false }
             texts[field.rawValue] = match
@@ -376,7 +334,6 @@ struct BusinessProfile: Codable, Equatable {
         return true
     }
 
-    // Plain-text list of every answer, handed to the AI models as background.
     var summaryForAI: String {
         BusinessPhase.allCases.map { phase in
             let lines = BusinessField.fields(in: phase).compactMap { field -> String? in
@@ -387,7 +344,6 @@ struct BusinessProfile: Codable, Equatable {
         }.joined(separator: "\n")
     }
 
-    // An answer written out for people, e.g. "$4,500 / mo", "35%", "12 people".
     func formatted(_ field: BusinessField) -> String {
         guard isAnswered(field) else { return "—" }
         switch field.kind {
@@ -399,10 +355,6 @@ struct BusinessProfile: Codable, Equatable {
     }
 }
 
-// MARK: - Store
-
-// Shared copy of the answers, saved to the phone (UserDefaults) as JSON every time they change.
-// (UserDefaults + JSON, the same way the old personal-finance stores saved.)
 final class BusinessStore: ObservableObject {
     static let shared = BusinessStore()
     private let key = "business.profile"
@@ -429,9 +381,6 @@ final class BusinessStore: ObservableObject {
     }
 }
 
-// MARK: - The math
-
-// How healthy one number is. Colors come from the app palette.
 enum BusinessRating {
     case healthy, watch, concern, unknown
 
@@ -457,26 +406,20 @@ enum BusinessRating {
 struct BusinessMetrics {
     let p: BusinessProfile
 
-    // Income, per month
     var monthlyRevenue: Double { p[.annualRevenue] / 12 }
     var monthlyCOGS: Double { monthlyRevenue * p[.cogsPercent] / 100 }
     var grossProfit: Double { monthlyRevenue - monthlyCOGS + p[.otherIncome] }
     var grossMargin: Double? { monthlyRevenue > 0 ? (monthlyRevenue - monthlyCOGS) / monthlyRevenue : nil }
 
-    // Costs, per month
     var payrollCost: Double { p[.grossPayroll] + p[.employerCosts] + p[.contractorPay] + p[.ownerPay] }
     var operatingCost: Double { p[.rent] + p[.insurance] + p[.softwareMarketing] + p[.otherOperating] }
     var debtService: Double {
         p[.termLoanPayment] + p[.locPayment] + p[.equipmentPayment] + p[.cardMinimum] + p[.mcaPayment]
     }
 
-    // Net operating income: what's left after running the business, before debt payments.
     var netOperatingIncome: Double { grossProfit - payrollCost - operatingCost }
-    // What's left after debt payments too. Negative = the business is burning cash.
     var netCashFlow: Double { netOperatingIncome - debtService }
 
-    // Debt service coverage ratio (DSCR). Lenders, including SBA lenders, usually want 1.25 or more:
-    // $1.25 of operating income for every $1 of debt payments.
     var dscr: Double? { debtService > 0 ? netOperatingIncome / debtService : nil }
     var dscrRating: BusinessRating {
         guard let d = dscr else { return debtService == 0 && monthlyRevenue > 0 ? .healthy : .unknown }
@@ -488,7 +431,6 @@ struct BusinessMetrics {
     }
 
     var payrollShare: Double? { monthlyRevenue > 0 ? payrollCost / monthlyRevenue : nil }
-    // Rough guide only: service businesses run higher than retail or manufacturing.
     var payrollRating: BusinessRating {
         guard let s = payrollShare else { return .unknown }
         switch s {
@@ -498,7 +440,6 @@ struct BusinessMetrics {
         }
     }
 
-    // How many months of fixed costs (payroll + operating + debt) the cash in the bank covers.
     var fixedMonthlyCosts: Double { payrollCost + operatingCost + debtService }
     var cashCoverageMonths: Double? { fixedMonthlyCosts > 0 ? p[.cashOnHand] / fixedMonthlyCosts : nil }
     var cashRating: BusinessRating {
@@ -510,10 +451,8 @@ struct BusinessMetrics {
         }
     }
 
-    // If the business is losing money each month: how long until the cash runs out.
     var runwayMonths: Double? { netCashFlow < 0 ? p[.cashOnHand] / -netCashFlow : nil }
 
-    // Current ratio: short-term assets ÷ short-term debts. Above 1.5 is comfortable; below 1 is tight.
     var currentAssets: Double { p[.cashOnHand] + p[.accountsReceivable] + p[.inventoryValue] }
     var currentLiabilities: Double { p[.accountsPayable] + p[.locBalance] + p[.cardBalance] + p[.backTaxesOwed] }
     var currentRatio: Double? { currentLiabilities > 0 ? currentAssets / currentLiabilities : nil }
@@ -529,7 +468,6 @@ struct BusinessMetrics {
     var totalDebt: Double { p[.termLoanBalance] + p[.locBalance] + p[.cardBalance] + p[.backTaxesOwed] }
     var lineUtilization: Double? { p[.locLimit] > 0 ? p[.locBalance] / p[.locLimit] : nil }
 
-    // Cash needed on one payday, from the monthly payroll and how often it runs.
     var cashPerPayroll: Double? {
         let monthly = p[.grossPayroll] + p[.employerCosts]
         guard monthly > 0 else { return nil }
@@ -542,7 +480,6 @@ struct BusinessMetrics {
         }
     }
 
-    // Numbers the AI writes its action plan from (so it doesn't do its own, possibly wrong, math).
     var summaryForAI: String {
         func r(_ x: Double?) -> String { x.map { String(format: "%.2f", $0) } ?? "n/a" }
         return """

@@ -1,23 +1,6 @@
-//
-//  BusinessViews.swift
-//  Smart Flow
-//
-// BUSINESS CHECKUP: the screens. Four of them are tabs (see ContentView in ContentView.swift):
-//   BusinessCheckupView        = Overview tab: first-glance charts, progress, ways to answer
-//   BusinessPhasesList         = the 6 phases (Interview tab > Phases), each opening BusinessQuestionsView
-//   BusinessInterviewView      = Interview tab: chat with the AI interviewer (OpenAI)
-//   BusinessQuestionsView      = the same questions as a form, one phase at a time (no AI needed)
-//   BusinessDocumentImportView = Import tab: read a P&L / bank / payroll document (OpenAI)
-//   BusinessResultsView        = Results tab: health numbers, monthly cash flow, watch-outs, AI action plan (OpenAI)
-//   AISettingsForm             = enter API keys (shown in the Settings tab; AISettingsView is the pop-up version)
-// Buttons that jump to another tab use TabRouter (ContentView.swift).
-// Data and math are in BusinessProfile.swift, AI calls in AIServices.swift and BusinessAIAgents.swift.
-
 import SwiftUI
 import UniformTypeIdentifiers
 import PhotosUI
-
-// MARK: - Hub
 
 struct BusinessCheckupView: View {
     @ObservedObject private var store = BusinessStore.shared
@@ -29,7 +12,6 @@ struct BusinessCheckupView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // First-glance charts: where each month's income goes and how long the cash lasts.
                 CashSplitCard(profile: profile) { router.selected = .interview }
                 CashRunwayCard(profile: profile)
                 headerCard
@@ -93,7 +75,6 @@ struct BusinessCheckupView: View {
     }
 }
 
-// Round icon, title, subtitle, chevron. BusinessRow opens a screen; BusinessTabRow jumps to another tab.
 struct BusinessRow<Destination: View>: View {
     let title: String
     let subtitle: String
@@ -150,8 +131,6 @@ struct BusinessRowLabel: View {
     }
 }
 
-// MARK: - AI interview (OpenAI)
-
 struct BusinessInterviewView: View {
     @StateObject private var agent = BusinessInterviewAgent()
     @ObservedObject private var store = BusinessStore.shared
@@ -163,7 +142,6 @@ struct BusinessInterviewView: View {
     private var hasKey: Bool { AIKeyVault.hasKey(AIFeature.interview.provider) }
     private var allDone: Bool { store.profile.completedPhases == BusinessPhase.allCases.count }
 
-    // "Saved: question · question · question +2 more", shown under the latest reply.
     private var savedNote: String {
         let names = agent.lastSaved.prefix(3).map { $0.question }.joined(separator: " · ")
         let extra = agent.lastSaved.count > 3 ? " +\(agent.lastSaved.count - 3) more" : ""
@@ -172,7 +150,6 @@ struct BusinessInterviewView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Switch between the AI chat and the 6 phases (answer them yourself, or see what's left).
             Picker("Mode", selection: $router.interviewMode) {
                 Text("AI chat").tag(InterviewMode.chat)
                 Text("Phases").tag(InterviewMode.phases)
@@ -209,7 +186,6 @@ struct BusinessInterviewView: View {
         .onChange(of: router.interviewMode) { _ in startChatIfReady() }
     }
 
-    // The AI greets the owner only once the chat is actually on screen (saves API calls).
     private func startChatIfReady() {
         if hasKey && router.interviewMode == .chat { agent.start() }
     }
@@ -265,7 +241,6 @@ struct BusinessInterviewView: View {
             inputBar
     }
 
-    // Small chips along the top: one per phase, ticked when complete.
     private var phaseStrip: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
@@ -359,7 +334,6 @@ struct BusinessInterviewView: View {
         .background(cardBackground)
     }
 
-    // The growing multi-line box needs iOS 16; older phones get a one-line box.
     @ViewBuilder private var messageField: some View {
         if #available(iOS 16.0, *) {
             TextField("Type your answer…", text: $draft, axis: .vertical).lineLimit(1...4)
@@ -369,13 +343,10 @@ struct BusinessInterviewView: View {
     }
 }
 
-// Turns the model's **bold** into real bold, keeping line breaks.
 func markdown(_ text: String) -> AttributedString {
     let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
     return (try? AttributedString(markdown: text, options: options)) ?? AttributedString(text)
 }
-
-// MARK: - Phases list (Interview tab > Phases)
 
 struct BusinessPhasesList: View {
     @ObservedObject private var store = BusinessStore.shared
@@ -415,8 +386,6 @@ struct BusinessPhasesList: View {
         return left == 0 ? "Complete" : "\(left) question\(left == 1 ? "" : "s") left"
     }
 }
-
-// MARK: - Questions form (no AI)
 
 struct BusinessQuestionsView: View {
     @ObservedObject private var store = BusinessStore.shared
@@ -500,7 +469,6 @@ struct BusinessQuestionsView: View {
     }
 }
 
-// One question. The input changes with the kind of answer (money, percent, count, text, choice, yes/no).
 struct BusinessQuestionRow: View {
     let field: BusinessField
     @ObservedObject var store: BusinessStore
@@ -575,7 +543,6 @@ struct BusinessQuestionRow: View {
         .buttonStyle(.plain)
     }
 
-    // Whole numbers only, so the box never reformats while typing. Empty box = unanswered.
     private var numberBinding: Binding<String> {
         Binding(
             get: {
@@ -598,8 +565,6 @@ struct BusinessQuestionRow: View {
     }
 }
 
-// MARK: - Document import (OpenAI)
-
 struct BusinessDocumentImportView: View {
     @ObservedObject private var store = BusinessStore.shared
     @ObservedObject private var keys = AIKeyStatus.shared
@@ -612,7 +577,7 @@ struct BusinessDocumentImportView: View {
     @State private var selected: Set<BusinessField> = []
     @State private var savedCount: Int?
 
-    private let maxBytes = 15 * 1024 * 1024   // keeps uploads quick; OpenAI accepts files up to 50 MB
+    private let maxBytes = 15 * 1024 * 1024
     private var hasKey: Bool { AIKeyVault.hasKey(AIFeature.documentImport.provider) }
 
     var body: some View {
@@ -637,7 +602,6 @@ struct BusinessDocumentImportView: View {
                                     read(AIAttachment(data: data, mimeType: "image/jpeg", filename: "photo.jpg"), name: "Photo")
                                 }
                             }
-                            // Only shown on devices with a camera (the Simulator has none).
                             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                                 BusinessCameraButton(disabled: isReading) { data in
                                     read(AIAttachment(data: data, mimeType: "image/jpeg", filename: "photo.jpg"), name: "Photo")
@@ -741,7 +705,6 @@ struct BusinessDocumentImportView: View {
         }
     }
 
-    // "Found $8,200 / mo (you entered $7,900 / mo)".
     private func preview(_ field: BusinessField, _ value: Double) -> String {
         var probe = BusinessProfile()
         probe.set(field, from: value)
@@ -750,7 +713,6 @@ struct BusinessDocumentImportView: View {
     }
 
     private func loadFile(_ url: URL) {
-        // Files from the Files app are "security scoped": access has to be opened and closed.
         let opened = url.startAccessingSecurityScopedResource()
         defer { if opened { url.stopAccessingSecurityScopedResource() } }
         do {
@@ -786,7 +748,6 @@ struct BusinessDocumentImportView: View {
     }
 }
 
-// Photo library picker (iOS 16+). Converts the photo to JPEG before handing it over.
 @available(iOS 16.0, *)
 struct BusinessPhotoButton: View {
     let disabled: Bool
@@ -820,8 +781,6 @@ struct BusinessPhotoButton: View {
     }
 }
 
-// Camera button: takes a picture of a document. Converts it to JPEG before handing it over,
-// just like BusinessPhotoButton. Works on iOS 15 (uses UIKit's camera screen).
 struct BusinessCameraButton: View {
     let disabled: Bool
     let onPick: (Data) -> Void
@@ -852,8 +811,6 @@ struct BusinessCameraButton: View {
     }
 }
 
-// SwiftUI has no camera view on iOS 15, so this wraps UIKit's UIImagePickerController.
-// It calls onImage with the picture taken, then closes itself (also closes on Cancel).
 struct CameraPicker: UIViewControllerRepresentable {
     let onImage: (UIImage) -> Void
     @Environment(\.dismiss) private var dismiss
@@ -869,7 +826,6 @@ struct CameraPicker: UIViewControllerRepresentable {
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
-    // The "coordinator" receives UIKit's callbacks (photo taken / cancelled).
     final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         let parent: CameraPicker
         init(_ parent: CameraPicker) { self.parent = parent }
@@ -885,8 +841,6 @@ struct CameraPicker: UIViewControllerRepresentable {
         }
     }
 }
-
-// MARK: - Results
 
 struct BusinessResultsView: View {
     @ObservedObject private var store = BusinessStore.shared
@@ -917,7 +871,6 @@ struct BusinessResultsView: View {
         .sheet(isPresented: $showSettings) { AISettingsView() }
     }
 
-    // Shown until there's at least a revenue figure to work from.
     private var emptyState: some View {
         VStack(spacing: 14) {
             Image(systemName: "chart.bar.doc.horizontal")
@@ -1033,7 +986,6 @@ struct BusinessResultsView: View {
         }
     }
 
-    // Plain-language flags worked out by the app (no AI needed).
     private var watchOuts: [String] {
         var list: [String] = []
         if p[.backTaxesOwed] > 0 {
@@ -1140,9 +1092,6 @@ struct BusinessMetricTile: View {
     }
 }
 
-// MARK: - AI settings (API keys)
-
-// Pop-up version, used by the "Add API key" buttons on the AI screens.
 struct AISettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -1158,10 +1107,8 @@ struct AISettingsView: View {
     }
 }
 
-// The key entry form itself. Opened from Settings > AI keys, or inside AISettingsView.
 struct AISettingsForm: View {
     @State private var drafts: [AIProvider: String] = [:]
-    // Redraws this form (and every AI screen) when a key is saved or removed.
     @ObservedObject private var keys = AIKeyStatus.shared
 
     var body: some View {

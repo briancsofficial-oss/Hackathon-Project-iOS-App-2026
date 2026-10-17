@@ -7,67 +7,39 @@ private func adaptive(light: (CGFloat, CGFloat, CGFloat), dark: (CGFloat, CGFloa
     })
 }
 
-// brandColor: the deep purple used for headers, the logo and buttons (was navy blue before). Change these two
-// sets of numbers to re-color the whole app; linkColor and pillBackground further down should match it.
-// Not private, because the login screen in SmartFlowApp.swift uses it too. A bit brighter in Dark Mode so it stays visible.
 let brandColor = adaptive(light: (0.33, 0.16, 0.55), dark: (0.52, 0.38, 0.85))
-// pageBackground: the light gray behind every screen (near-black in Dark Mode). Apple's built-in grouped background color.
 let pageBackground = Color(.systemGroupedBackground)
-// cardBackground: the white behind cards and rows (dark gray in Dark Mode).
 let cardBackground = Color(.secondarySystemGroupedBackground)
-// confirmGreen: the green used for good news (autopay set, goal reached, payments).
 let confirmGreen = adaptive(light: (0.13, 0.47, 0.36), dark: (0.35, 0.78, 0.58))
 
-// The link/button purple and the pale purple used behind "pill" buttons and round icons.
 let linkColor = adaptive(light: (0.42, 0.22, 0.70), dark: (0.72, 0.60, 1.0))
 let pillBackground = adaptive(light: (0.95, 0.92, 0.99), dark: (0.22, 0.17, 0.32))
 
-// MARK: - Card container
-// AccountSection is a reusable "card" container: a purple title bar with white content under it.
-// It's used on the Overview, question, import and results screens.
-// <Content: View> is a "generic": the card can hold ANY kind of view you put inside it.
-// A rounded card with a purple header bar and white content underneath.
 struct AccountSection<Content: View>: View {
-    // The text shown in the purple header, e.g. "Import a document".
     let title: String
-    // @ViewBuilder lets callers write several views inside { } (like a VStack does) and have them passed in as "content".
     @ViewBuilder let content: Content
 
     var body: some View {
-        // Header on top, content below, no gap.
         VStack(spacing: 0) {
-            // The purple header bar: white text, stretched full width, left-aligned, with padding and purple background.
             Text(title)
                 .font(.system(size: 20, weight: .medium))
                 .foregroundColor(.white)
-                // maxWidth: .infinity = stretch to the full width of the card; alignment .leading = keep the text on the left.
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 22)
-                // The purple background comes AFTER the padding so the colored area includes the padding.
                 .background(brandColor)
 
-            // The white body of the card, holding whatever was passed in.
             VStack(spacing: 0) {
                 content
             }
             .background(cardBackground)
         }
-        // Round the corners of the whole card (header + body) by 14 points.
         .clipShape(RoundedRectangle(cornerRadius: 14))
-        // Soft drop shadow: black at 8% opacity, blurred 4 points, shifted 2 points down.
         .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
     }
 }
 
-// MARK: - Settings screens (opened from the Settings tab)
-
-// Row 1: About
-// App name, version number and credits.
 struct AppInfoView: View {
-    // Reads the version from the project settings (MARKETING_VERSION, currently 1.0),
-    // so if you bump the version in Xcode this screen updates by itself. Falls back to "1.0".
-    // took A LOT of googling to eventually get right.
     private var version: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
@@ -75,7 +47,6 @@ struct AppInfoView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
-                // Copying logo from login screen.
                 Image(systemName: "dollarsign.building.classical")
                     .font(.system(size: 64))
                     .foregroundColor(brandColor)
@@ -91,22 +62,17 @@ struct AppInfoView: View {
                     .foregroundColor(.secondary)
                     .padding()
             }
-            // Stretch to full width so everything stays centered. Regardless of device used it should stretch to stay centered.
             .frame(maxWidth: .infinity)
         }
         .background(pageBackground)
         .navigationTitle("About")
-        // .inline = small title in the bar (instead of the big one), since the page has its own big title.
         .navigationBarTitleDisplayMode(.inline)
     }
 }
 
-//Row 2: COPYRIGHT AND PRIVACY SECTION.
-// The copyright notice, split into short paragraphs so it's readable on a phone, also added a privacy note.
 struct CopyrightPrivacyView: View {
     var body: some View {
         ScrollView {
-            // alignment: .leading = left-align everything in the stack.
             VStack(alignment: .leading, spacing: 14) {
                 Text("Copyright and Educational Project Notice")
                     .font(.headline)
@@ -117,7 +83,6 @@ struct CopyrightPrivacyView: View {
                 Text("U.S. copyright law protects original expression, subject to statutory limitations and exceptions. Fair use under 17 U.S.C. § 107 requires a case-specific assessment of the purpose and character of the use, the nature of the copyrighted work, the amount and substantiality used, and the effect on the potential market for the original work. An educational purpose alone does not establish fair use. This notice does not assert that every use of third-party material qualifies as fair use.")
                 Text("This application is intended as an educational demonstration and should not be relied upon for banking services, financial advice, or real financial transactions.")
 
-                // Privacy part. Keep this true whenever a feature starts sending data somewhere.
                 Text("Privacy")
                     .font(.headline)
                     .padding(.top, 8)
@@ -132,46 +97,37 @@ struct CopyrightPrivacyView: View {
     }
 }
 
-//  Row 3: Profile & Settings
-// let's add name, phone, email and ability to change password.
-// Shows (and lets you edit) name, phone and email, plus a Change Password button.
-// @AppStorage saves each value on the phone as soon as it changes, so there's no Save button needed.
 struct ProfileSettingsView: View {
-    @AppStorage("profile.name") private var fullName = "" // left empty intentionally.
+    @AppStorage("profile.name") private var fullName = ""
     @AppStorage("profile.phone") private var phone = ""
     @AppStorage("profile.email") private var email = ""
-    // Same key the login screen uses (SmartFlowApp.swift), so they always match.
     @AppStorage("login.username") private var username = validUsername
-    // Whether the Change Password sheet is open.
     @State private var showingChangePassword = false
-    // Whether Face ID login is on (the login screen reads the same value).
     @AppStorage("login.faceID") private var faceIDEnabled = false
 
     var body: some View {
-        // Form = a List made for data entry (text boxes, toggles, buttons).
         Form {
             Section(header: Text("Profile")) {
-                // Each row: label on the left, editable box on the right.
                 HStack {
                     Text("Name")
                     TextField("Full name", text: $fullName)
-                        .multilineTextAlignment(.trailing)   // right-align the typed text
-                        .textContentType(.name)              // lets iOS suggest your name
+                        .multilineTextAlignment(.trailing)
+                        .textContentType(.name)
                 }
                 HStack {
                     Text("Phone")
                     TextField("(555) 555-5555", text: $phone)
                         .multilineTextAlignment(.trailing)
-                        .keyboardType(.phonePad)             // number keypad
+                        .keyboardType(.phonePad)
                         .textContentType(.telephoneNumber)
                 }
                 HStack {
                     Text("Email")
                     TextField("name@example.com", text: $email)
                         .multilineTextAlignment(.trailing)
-                        .keyboardType(.emailAddress)         // keyboard with @ and .
+                        .keyboardType(.emailAddress)
                         .textContentType(.emailAddress)
-                        .textInputAutocapitalization(.never) // emails shouldn't start with a capital
+                        .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                 }
             }
@@ -183,7 +139,6 @@ struct ProfileSettingsView: View {
                     Text(username).foregroundColor(.secondary)
                 }
                 Button("Change Password") { showingChangePassword = true }
-                // Face ID login. Turning it on asks for Face ID once, to prove it's the phone's owner.
                 if BiometricAuth.isAvailable {
                     Toggle("Log in with \(BiometricAuth.name)", isOn: Binding(
                         get: { faceIDEnabled },
@@ -206,45 +161,37 @@ struct ProfileSettingsView: View {
         }
         .navigationTitle("Profile & Settings")
         .navigationBarTitleDisplayMode(.inline)
-        // "Done" button above the keyboard (the phone pad has no Return key, so this is the way to close it).
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 Button("Done") { hideKeyboard() }
             }
         }
-        // .sheet slides the Change Password screen up from the bottom.
         .sheet(isPresented: $showingChangePassword) {
             ChangePasswordSheet()
         }
     }
 }
 
-// The Change Password screen. Checks the current password, then saves the new one.
-// PasswordVault (in SmartFlowApp.swift) saves it in the iPhone Keychain, so the new password works at the next login.
 struct ChangePasswordSheet: View {
-    // dismiss() closes this sheet.
     @Environment(\.dismiss) private var dismiss
 
     @State private var currentPassword = ""
     @State private var newPassword = ""
     @State private var confirmPassword = ""
-    // Red message shown under the boxes. nil = no error.
     @State private var errorMessage: String?
-    // Shows the "Password changed" popup.
     @State private var showingSuccess = false
 
     var body: some View {
         NavigationView {
             Form {
                 Section {
-                    SecureField("Current password", text: $currentPassword) // checks for current password, if wrong error is shown.
+                    SecureField("Current password", text: $currentPassword)
                 }
                 Section(footer: Text("Use at least 6 characters.")) {
-                    SecureField("New password", text: $newPassword) // new password
-                    SecureField("Confirm new password", text: $confirmPassword) // confirming the passwrod.
+                    SecureField("New password", text: $newPassword)
+                    SecureField("Confirm new password", text: $confirmPassword)
                 }
-                // Only shown after a failed Save.
                 if let errorMessage = errorMessage {
                     Section {
                         Text(errorMessage).foregroundColor(.red)
@@ -259,11 +206,9 @@ struct ChangePasswordSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save", action: savePassword)
-                        // Greyed out until all three boxes have something in them.
                         .disabled(currentPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty)
                 }
             }
-            // After OK is tapped, close the sheet.
             .alert("Password changed", isPresented: $showingSuccess) {
                 Button("OK") { dismiss() }
             } message: {
@@ -272,7 +217,6 @@ struct ChangePasswordSheet: View {
         }
     }
 
-    // Runs the checks in order and stops at the first problem.
     private func savePassword() {
         if !PasswordVault.matches(currentPassword) {
             errorMessage = "Current password is incorrect."
@@ -293,11 +237,7 @@ struct ChangePasswordSheet: View {
     }
 }
 
-// ---- Row 4: Help ----
-// Basic troubleshooting. Each question is a DisclosureGroup: tap it to expand the answer.
 struct HelpView: View {
-    // One help topic: a question and its answer steps.
-    // Identifiable (with id = question) lets ForEach tell the topics apart.
     private struct HelpTopic: Identifiable {
         let question: String
         let answer: String
@@ -328,7 +268,6 @@ struct HelpView: View {
     var body: some View {
         List {
             Section(header: Text("Troubleshooting")) {
-                // ForEach makes one expandable row per topic.
                 ForEach(topics) { topic in
                     DisclosureGroup(topic.question) {
                         Text(topic.answer)
@@ -345,25 +284,16 @@ struct HelpView: View {
     }
 }
 
-// MARK: - Shared helpers
-
-// Formats as whole dollars with no cents, e.g. 1234.56 -> "$1,235".
 func money(_ value: Double) -> String {
     value.formatted(.currency(code: "USD").precision(.fractionLength(0)))
 }
 
-// Closes the on-screen keyboard (used by all the "Done" buttons).
 func hideKeyboard() {
     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
 }
 
-// MARK: - SETTINGS TAB
-
-// The Settings tab: AI keys, business data, account (profile, password, Face ID), device status, about, log out.
 struct BusinessSettingsView: View {
-    // Used by the Log Out button.
     @EnvironmentObject var session: AppSession
-    // Wi-Fi and Bluetooth status (NetworkMonitor.swift, Bluetooth Monitor.swift).
     @EnvironmentObject var network: NetworkMonitor
     @EnvironmentObject var bluetooth: BluetoothMonitor
     @ObservedObject private var store = BusinessStore.shared
@@ -429,7 +359,6 @@ struct BusinessSettingsView: View {
             }
 
             Section {
-                // Signs out and goes back to the login screen.
                 Button(role: .destructive) {
                     session.logOut()
                 } label: {
@@ -449,20 +378,14 @@ struct BusinessSettingsView: View {
     }
 }
 
-// MARK: - THE TAB BAR (ContentView): what the app shows after logging in
-
-// The five tabs. Rename the titles and change the icons here.
 enum AppTab: Hashable {
     case overview, interview, importDocs, results, settings
 }
 
-// The Interview tab's two views: the AI chat, or the list of 6 phases to answer yourself.
 enum InterviewMode: Hashable {
     case chat, phases
 }
 
-// Lets any screen switch tabs, e.g. the "See results" buttons (router.selected = .results),
-// and pick which half of the Interview tab shows (router.interviewMode = .phases).
 final class TabRouter: ObservableObject {
     @Published var selected: AppTab = .overview
     @Published var interviewMode: InterviewMode = .chat
@@ -472,9 +395,7 @@ struct ContentView: View {
     @StateObject private var router = TabRouter()
 
     var body: some View {
-        // selection: the TabView follows router.selected, so buttons elsewhere can change tabs.
         TabView(selection: $router.selected) {
-            // Tab 1: Overview (progress, phases, step-by-step questions).
             tab { BusinessCheckupView() }
                 .tabItem {
                     Text("Overview")
@@ -482,7 +403,6 @@ struct ContentView: View {
                 }
                 .tag(AppTab.overview)
 
-            // Tab 2: AI interview (OpenAI).
             tab { BusinessInterviewView() }
                 .tabItem {
                     Text("Interview")
@@ -490,7 +410,6 @@ struct ContentView: View {
                 }
                 .tag(AppTab.interview)
 
-            // Tab 3: Document import (OpenAI).
             tab { BusinessDocumentImportView() }
                 .tabItem {
                     Text("Import")
@@ -498,7 +417,6 @@ struct ContentView: View {
                 }
                 .tag(AppTab.importDocs)
 
-            // Tab 4: Results + AI action plan (OpenAI).
             tab { BusinessResultsView() }
                 .tabItem {
                     Text("Results")
@@ -506,7 +424,6 @@ struct ContentView: View {
                 }
                 .tag(AppTab.results)
 
-            // Tab 5: Settings (AI keys, profile, password, Face ID, help, log out).
             tab { BusinessSettingsView() }
                 .tabItem {
                     Text("Settings")
@@ -517,19 +434,15 @@ struct ContentView: View {
         .environmentObject(router)
     }
 
-    // Each tab gets its own navigation stack, so its screens can open further screens with a Back button.
-    // .stack keeps the iPhone-style single column on iPad too.
     private func tab<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
         NavigationView { content() }
             .navigationViewStyle(.stack)
     }
 }
 
-// Xcode preview: lets me see ContentView in Xcode's canvas without running the simulator.
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            // The preview needs its own copies of the shared objects, or it crashes looking for them.
             .environmentObject(NetworkMonitor())
             .environmentObject(BluetoothMonitor())
             .environmentObject(AppSession())
