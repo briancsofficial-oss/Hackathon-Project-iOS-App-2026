@@ -5,73 +5,106 @@ import PhotosUI
 struct BusinessCheckupView: View {
     @ObservedObject private var store = BusinessStore.shared
     @EnvironmentObject var router: TabRouter
-    @State private var confirmClear = false
+    @AppStorage("profile.name") private var fullName = ""
 
     private var profile: BusinessProfile { store.profile }
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(alignment: .leading, spacing: 20) {
+                greeting
+                actionBar
+                progressCard
                 CashSplitCard(profile: profile) { router.selected = .interview }
                 CashRunwayCard(profile: profile)
-                headerCard
-
-                AccountSection(title: "Answer your way") {
-                    BusinessTabRow(title: "Interview with AI", subtitle: "Answer by chatting · \(AIFeature.interview.provider.rawValue)",
-                                   icon: "bubble.left.and.text.bubble.right.fill") {
-                        router.interviewMode = .chat
-                        router.selected = .interview
-                    }
-                    Divider().padding(.leading, 76)
-                    BusinessTabRow(title: "Import a document", subtitle: "P&L, bank or payroll report · \(AIFeature.documentImport.provider.rawValue)",
-                                   icon: "doc.text.viewfinder") {
-                        router.selected = .importDocs
-                    }
-                    Divider().padding(.leading, 76)
-                    BusinessTabRow(title: "Answer the questions", subtitle: "Go phase by phase yourself, no AI",
-                                   icon: "list.number") {
-                        router.interviewMode = .phases
-                        router.selected = .interview
-                    }
-                }
             }
             .padding(16)
         }
         .background(pageBackground.ignoresSafeArea())
-        .navigationTitle("Business Checkup")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarHidden(false)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button { confirmClear = true } label: { Image(systemName: "trash") }
-                    .disabled(profile.isEmpty)
-                    .accessibilityLabel("Clear answers")
-            }
-        }
-        .confirmationDialog("Clear every business answer?", isPresented: $confirmClear, titleVisibility: .visible) {
-            Button("Clear answers", role: .destructive) { store.reset() }
-        }
+        .navigationTitle("Overview")
+        .navigationBarHidden(true)
     }
 
-    private var headerCard: some View {
+    private var firstName: String {
+        fullName.split(separator: " ").first.map(String.init) ?? ""
+    }
+
+    private var greeting: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(spacing: 6) {
+                Image(systemName: "wind")
+                    .font(.system(size: 20, weight: .bold))
+                Text("Smart Flow")
+                    .font(.system(size: 22, weight: .bold))
+            }
+            HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(firstName.isEmpty ? "Hi there" : "Hi, \(firstName)")
+                        .font(.system(size: 17, weight: .semibold))
+                    Text(profile.displayName)
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("\(profile.completedPhases) of \(BusinessPhase.allCases.count)")
+                        .font(.system(size: 24, weight: .bold))
+                    Text("phases done")
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .padding(.top, 8)
+    }
+
+    private var actionBar: some View {
+        HStack(spacing: 0) {
+            actionButton("Interview", icon: "bubble.left.and.text.bubble.right") {
+                router.interviewMode = .chat
+                router.selected = .interview
+            }
+            actionButton("Import", icon: "doc.text.viewfinder") {
+                router.selected = .importDocs
+            }
+            actionButton("Questions", icon: "list.number") {
+                router.interviewMode = .phases
+                router.selected = .interview
+            }
+        }
+        .padding(.vertical, 16)
+        .background(RoundedRectangle(cornerRadius: 16).fill(brandColor))
+    }
+
+    private func actionButton(_ title: String, icon: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 17))
+                    .frame(width: 40, height: 40)
+                    .overlay(Circle().stroke(Color.white.opacity(0.9), lineWidth: 1.5))
+                Text(title)
+                    .font(.system(size: 13, weight: .medium))
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var progressCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(profile.displayName)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white.opacity(0.8))
-            Text("\(profile.completedPhases) of \(BusinessPhase.allCases.count) phases complete")
-                .font(.system(size: 26, weight: .semibold))
-                .foregroundColor(.white)
+            Text("Your business checkup")
+                .font(.system(size: 18, weight: .bold))
             ProgressView(value: Double(profile.completedPhases), total: Double(BusinessPhase.allCases.count))
-                .tint(.white)
+                .tint(.primary)
             Text("Revenue, payroll, costs, debt, cash and goals. Answers are saved on this iPhone. They're sent to the AI only when you use an AI feature.")
-                .font(.system(size: 14))
-                .foregroundColor(.white.opacity(0.85))
+                .font(.system(size: 13))
+                .foregroundColor(.primary.opacity(0.75))
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(brandColor)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
+        .background(RoundedRectangle(cornerRadius: 16).fill(highlightBackground))
     }
 }
 
@@ -83,20 +116,6 @@ struct BusinessRow<Destination: View>: View {
 
     var body: some View {
         NavigationLink(destination: destination()) {
-            BusinessRowLabel(title: title, subtitle: subtitle, icon: icon)
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-struct BusinessTabRow: View {
-    let title: String
-    let subtitle: String
-    let icon: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
             BusinessRowLabel(title: title, subtitle: subtitle, icon: icon)
         }
         .buttonStyle(.plain)
@@ -1156,6 +1175,7 @@ struct AISettingsForm: View {
                     Text("Your key is kept in this iPhone's Keychain. When you use an AI feature, your business answers (or the document you picked) are sent to OpenAI to be processed.")
                 }
             }
+            .creamListBackground()
             .navigationTitle("AI Settings")
             .navigationBarTitleDisplayMode(.inline)
     }

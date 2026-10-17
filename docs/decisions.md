@@ -2,6 +2,10 @@
 
 Newest first. Each entry: date, decision, why.
 
+## 2026-10-17 — Cream-and-black redesign; reset lives in Settings
+**Decision:** Restyled the app after a reference fintech mockup: cream background, white cards with black titles, black buttons and action bar, a pink highlight card. The Overview got a greeting header and a 3-button action bar. The trash button on the Overview was removed; "Clear all business answers" in Settings is the one place to reset.
+**Why:** A cleaner, more modern look, and a destructive action shouldn't sit one tap away on the home screen.
+
 ## 2026-10-17 — Rename the app to Smart Flow
 **Decision:** Renamed "The Wealth App" / "Safety First" to Smart Flow everywhere: display name, Xcode project, target, scheme, source folder, `SmartFlowApp.swift`, bundle ID `com.briansanchez.smartflow`, and the Keychain service names (`SmartFlow.login`, `SmartFlow.aiKeys`).
 **Why:** One name for the product. The new bundle ID means it installs as a new app, so a saved password and OpenAI key from the old app don't carry over.

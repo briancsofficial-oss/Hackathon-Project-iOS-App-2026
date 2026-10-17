@@ -116,12 +116,12 @@ struct LoginView: View {
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .padding()
-                .background(Color(.secondarySystemBackground))
+                .background(cardBackground)
                 .cornerRadius(10)
 
             SecureField("Password", text: $password)
                 .padding()
-                .background(Color(.secondarySystemBackground))
+                .background(cardBackground)
                 .cornerRadius(10)
                 .onSubmit(attemptLogin)
 
@@ -158,6 +158,7 @@ struct LoginView: View {
             Spacer()
         }
         .padding(.horizontal, 32)
+        .background(pageBackground.ignoresSafeArea())
         .onAppear {
             if canUseFaceID && !didOfferFaceIDThisLaunch {
                 didOfferFaceIDThisLaunch = true

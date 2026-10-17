@@ -7,13 +7,24 @@ private func adaptive(light: (CGFloat, CGFloat, CGFloat), dark: (CGFloat, CGFloa
     })
 }
 
-let brandColor = adaptive(light: (0.33, 0.16, 0.55), dark: (0.52, 0.38, 0.85))
-let pageBackground = Color(.systemGroupedBackground)
-let cardBackground = Color(.secondarySystemGroupedBackground)
+let brandColor = adaptive(light: (0.07, 0.07, 0.07), dark: (0.45, 0.45, 0.45))
+let pageBackground = adaptive(light: (0.96, 0.93, 0.89), dark: (0.07, 0.07, 0.07))
+let cardBackground = adaptive(light: (1.0, 1.0, 1.0), dark: (0.13, 0.13, 0.13))
 let confirmGreen = adaptive(light: (0.13, 0.47, 0.36), dark: (0.35, 0.78, 0.58))
 
-let linkColor = adaptive(light: (0.42, 0.22, 0.70), dark: (0.72, 0.60, 1.0))
-let pillBackground = adaptive(light: (0.95, 0.92, 0.99), dark: (0.22, 0.17, 0.32))
+let linkColor = adaptive(light: (0.07, 0.07, 0.07), dark: (0.96, 0.93, 0.89))
+let pillBackground = adaptive(light: (0.96, 0.93, 0.89), dark: (0.22, 0.22, 0.22))
+let highlightBackground = adaptive(light: (0.97, 0.72, 0.79), dark: (0.42, 0.24, 0.31))
+
+extension View {
+    @ViewBuilder func creamListBackground() -> some View {
+        if #available(iOS 16.0, *) {
+            self.scrollContentBackground(.hidden).background(pageBackground.ignoresSafeArea())
+        } else {
+            self
+        }
+    }
+}
 
 struct AccountSection<Content: View>: View {
     let title: String
@@ -22,20 +33,20 @@ struct AccountSection<Content: View>: View {
     var body: some View {
         VStack(spacing: 0) {
             Text(title)
-                .font(.system(size: 20, weight: .medium))
-                .foregroundColor(.white)
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 20)
-                .padding(.vertical, 22)
-                .background(brandColor)
+                .padding(.top, 18)
+                .padding(.bottom, 2)
 
             VStack(spacing: 0) {
                 content
             }
-            .background(cardBackground)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
+        .background(cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .shadow(color: .black.opacity(0.05), radius: 6, y: 2)
     }
 }
 
@@ -159,6 +170,7 @@ struct ProfileSettingsView: View {
                 }
             }
         }
+        .creamListBackground()
         .navigationTitle("Profile & Settings")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -198,6 +210,7 @@ struct ChangePasswordSheet: View {
                     }
                 }
             }
+            .creamListBackground()
             .navigationTitle("Change Password")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -279,6 +292,7 @@ struct HelpView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .creamListBackground()
         .navigationTitle("Help")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -367,6 +381,7 @@ struct BusinessSettingsView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .creamListBackground()
         .navigationTitle("Settings")
         .confirmationDialog("Clear every business answer?", isPresented: $confirmClear, titleVisibility: .visible) {
             Button("Clear answers", role: .destructive) { store.reset() }
