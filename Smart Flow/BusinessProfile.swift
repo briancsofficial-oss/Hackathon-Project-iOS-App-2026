@@ -403,6 +403,30 @@ enum BusinessRating {
     }
 }
 
+enum CashPeriod: String, CaseIterable, Identifiable {
+    case daily = "Daily"
+    case monthly = "Monthly"
+    case yearly = "Yearly"
+
+    var id: Self { self }
+
+    var perMonth: Double {
+        switch self {
+        case .daily:   return 12.0 / 365.0
+        case .monthly: return 1
+        case .yearly:  return 12
+        }
+    }
+
+    var unit: String {
+        switch self {
+        case .daily:   return "day"
+        case .monthly: return "month"
+        case .yearly:  return "year"
+        }
+    }
+}
+
 struct BusinessMetrics {
     let p: BusinessProfile
 

@@ -35,6 +35,7 @@ struct CashSplitCard: View {
     let profile: BusinessProfile
     let onStart: () -> Void
     @State private var focused: CashSlice.Kind?
+    @AppStorage("overview.cashPeriod") private var period: CashPeriod = .monthly
 
     init(profile: BusinessProfile, onStart: @escaping () -> Void) {
         self.profile = profile
@@ -42,29 +43,55 @@ struct CashSplitCard: View {
     }
 
     private var m: BusinessMetrics { BusinessMetrics(p: profile) }
-    private var income: Double { m.monthlyRevenue + profile[.otherIncome] }
-    private var expenses: Double { m.monthlyCOGS + m.payrollCost + m.operatingCost + m.debtService }
+    private var scale: Double { period.perMonth }
+    private var income: Double { (m.monthlyRevenue + profile[.otherIncome]) * scale }
+    private var expenses: Double { (m.monthlyCOGS + m.payrollCost + m.operatingCost + m.debtService) * scale }
     private var leftOver: Double { income - expenses }
 
     private var slices: [CashSlice] {
         [
-            CashSlice(kind: .cogs, amount: m.monthlyCOGS),
-            CashSlice(kind: .payroll, amount: m.payrollCost),
-            CashSlice(kind: .operating, amount: m.operatingCost),
-            CashSlice(kind: .debt, amount: m.debtService),
+            CashSlice(kind: .cogs, amount: m.monthlyCOGS * scale),
+            CashSlice(kind: .payroll, amount: m.payrollCost * scale),
+            CashSlice(kind: .operating, amount: m.operatingCost * scale),
+            CashSlice(kind: .debt, amount: m.debtService * scale),
             CashSlice(kind: .leftOver, amount: max(leftOver, 0)),
         ].filter { $0.amount > 0 }
     }
     private var pieTotal: Double { max(income, expenses) }
 
     var body: some View {
-        AccountSection(title: "Monthly cash flow") {
+        AccountSection(title: "\(period.rawValue) cash flow") {
             if income > 0 {
                 chartContent.padding(20)
             } else {
                 emptyContent.padding(20)
             }
         }
+        .overlay(alignment: .topTrailing) {
+            periodMenu
+                .padding(.top, 14)
+                .padding(.trailing, 16)
+        }
+    }
+
+    private var periodMenu: some View {
+        Menu {
+            Picker("Period", selection: $period) {
+                ForEach(CashPeriod.allCases) { Text($0.rawValue).tag($0) }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text(period.rawValue)
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 11, weight: .semibold))
+            }
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundColor(cream)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Capsule().fill(brandColor))
+        }
+        .accessibilityLabel("Cash flow period, \(period.rawValue)")
     }
 
     private var chartContent: some View {
@@ -125,7 +152,7 @@ struct CashSplitCard: View {
                     .foregroundColor(.secondary)
                 Text(compactMoney(leftOver))
                     .font(.system(size: 24, weight: .bold))
-                Text("per month")
+                Text("per \(period.unit)")
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
             } else {
@@ -135,7 +162,7 @@ struct CashSplitCard: View {
                 Text("-" + compactMoney(-leftOver))
                     .font(.system(size: 22, weight: .bold))
                     .foregroundColor(.red)
-                Text("per month")
+                Text("per \(period.unit)")
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
             }
@@ -185,7 +212,7 @@ struct CashSplitCard: View {
                 Circle()
                     .stroke(Color.gray.opacity(0.25), lineWidth: 14)
                     .frame(width: 56, height: 56)
-                Text("Add your revenue and costs to see how much cash the business keeps each month.")
+                Text("Add your revenue and costs to see how much cash the business keeps each \(period.unit).")
                     .font(.system(size: 15))
                     .foregroundColor(.gray)
             }
@@ -203,8 +230,8 @@ struct CashSplitCard: View {
 
     private var accessibilitySummary: String {
         let parts = slices.map { "\($0.kind.rawValue) \(money($0.amount))" }.joined(separator: ", ")
-        let lead = leftOver >= 0 ? "Cash left over \(money(leftOver)) a month" : "Short by \(money(-leftOver)) a month"
-        return "\(lead). Monthly income \(money(income)). \(parts)."
+        let lead = leftOver >= 0 ? "Cash left over \(money(leftOver)) a \(period.unit)" : "Short by \(money(-leftOver)) a \(period.unit)"
+        return "\(lead). \(period.rawValue) income \(money(income)). \(parts)."
     }
 
     private func compactMoney(_ value: Double) -> String {
