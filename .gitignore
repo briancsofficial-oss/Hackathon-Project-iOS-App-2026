@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# Xcode per-user and build output
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+
+# Secrets: never commit
+.env
+.env.*
+*.p12
+*.mobileprovision
+
+# Personal Claude files (each person keeps their own)
+CLAUDE.local.md
+.claude/settings.local.json
