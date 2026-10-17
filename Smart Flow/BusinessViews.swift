@@ -281,17 +281,17 @@ struct BusinessInterviewView: View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Business checkup interview", systemImage: "sparkles")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.white)
+                .foregroundColor(accentTealText)
             Text(hasKey
                  ? "I'll ask about revenue, payroll, costs, debt, cash and goals, and save your answers as we go. Estimates are fine. Your answers are sent to \(AIFeature.interview.provider.rawValue) to run this chat."
                  : "Add a \(AIFeature.interview.provider.rawValue) API key to start the interview. You can also answer the questions yourself without AI.")
                 .font(.system(size: 14))
-                .foregroundColor(.white.opacity(0.85))
+                .foregroundColor(accentTealText.opacity(0.85))
             if !hasKey {
                 Button("Add API key") { showSettings = true }
                     .buttonStyle(.borderedProminent)
-                    .tint(.white)
-                    .foregroundColor(brandColor)
+                    .tint(accentTealText)
+                    .foregroundColor(accentTeal)
             }
         }
         .padding(16)
