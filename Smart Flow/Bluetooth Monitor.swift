@@ -9,7 +9,6 @@ class BluetoothMonitor: NSObject, ObservableObject, CBCentralManagerDelegate {
 
     private var manager: CBCentralManager!
 
-    @Published var isBluetoothOn = false
     @Published var statusText = "Checking…"
 
     override init() {
@@ -20,7 +19,6 @@ class BluetoothMonitor: NSObject, ObservableObject, CBCentralManagerDelegate {
 
     // Called automatically whenever Bluetooth state changes.
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        isBluetoothOn = central.state == .poweredOn
         switch central.state {
         case .poweredOn:    statusText = "Bluetooth On"
         case .poweredOff:   statusText = "Bluetooth Off"

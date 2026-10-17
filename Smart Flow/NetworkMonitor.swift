@@ -27,9 +27,6 @@ class NetworkMonitor: ObservableObject {
     // true when the connection is going through Wi-Fi.
     @Published var isOnWiFi = false
 
-    // true when the connection is going through cellular data.
-    @Published var isOnCellular = false
-
     // Initializes the NetworkMonitor.
     init() {
 
@@ -49,7 +46,6 @@ class NetworkMonitor: ObservableObject {
 
                 // usesInterfaceType tells us WHICH connection is being used.
                 self.isOnWiFi = path.usesInterfaceType(.wifi)
-                self.isOnCellular = path.usesInterfaceType(.cellular)
             }
         }
 
