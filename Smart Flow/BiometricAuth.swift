@@ -1,6 +1,6 @@
 //
 //  BiometricAuth.swift
-//  Safety First
+//  Smart Flow
 //
 // BiometricAuth wraps Apple's LocalAuthentication API (Face ID / Touch ID).
 // The face or fingerprint check happens entirely inside iOS; the app only learns "yes, it's the owner" or "no".

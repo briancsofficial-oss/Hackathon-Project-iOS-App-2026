@@ -1,6 +1,6 @@
 //
 //  OverviewCharts.swift
-//  Safety First
+//  Smart Flow
 //
 // The other first-glance chart on the Overview tab (the cash-flow pie is in CashSplitChart.swift):
 //   CashRunwayCard  = how many months of fixed costs the cash in the bank covers, on a 0–6+ month bar

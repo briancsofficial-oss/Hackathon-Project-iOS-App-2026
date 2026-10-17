@@ -1,6 +1,6 @@
 //
 //  CashSplitChart.swift
-//  Safety First
+//  Smart Flow
 //
 // The pie chart at the top of the Overview tab: this month's income split into expenses
 // and the cash left over, with the left-over amount in the middle so it's readable at a glance.

@@ -9,7 +9,7 @@ private func adaptive(light: (CGFloat, CGFloat, CGFloat), dark: (CGFloat, CGFloa
 
 // brandColor: the deep purple used for headers, the logo and buttons (was navy blue before). Change these two
 // sets of numbers to re-color the whole app; linkColor and pillBackground further down should match it.
-// Not private, because the login screen in Safety_FirstApp.swift uses it too. A bit brighter in Dark Mode so it stays visible.
+// Not private, because the login screen in SmartFlowApp.swift uses it too. A bit brighter in Dark Mode so it stays visible.
 let brandColor = adaptive(light: (0.33, 0.16, 0.55), dark: (0.52, 0.38, 0.85))
 // pageBackground: the light gray behind every screen (near-black in Dark Mode). Apple's built-in grouped background color.
 let pageBackground = Color(.systemGroupedBackground)
@@ -80,7 +80,7 @@ struct AppInfoView: View {
                     .font(.system(size: 64))
                     .foregroundColor(brandColor)
                     .padding(.top, 32)
-                Text("The Wealth App")
+                Text("Smart Flow")
                     .font(.title).bold()
                     .foregroundColor(brandColor)
                 Text("Version \(version)")
@@ -140,7 +140,7 @@ struct ProfileSettingsView: View {
     @AppStorage("profile.name") private var fullName = "" // left empty intentionally.
     @AppStorage("profile.phone") private var phone = ""
     @AppStorage("profile.email") private var email = ""
-    // Same key the login screen uses (Safety_FirstApp.swift), so they always match.
+    // Same key the login screen uses (SmartFlowApp.swift), so they always match.
     @AppStorage("login.username") private var username = validUsername
     // Whether the Change Password sheet is open.
     @State private var showingChangePassword = false
@@ -190,7 +190,7 @@ struct ProfileSettingsView: View {
                         set: { turnOn in
                             if turnOn {
                                 Task {
-                                    if await BiometricAuth.authenticate(reason: "Turn on \(BiometricAuth.name) login for The Wealth App.") {
+                                    if await BiometricAuth.authenticate(reason: "Turn on \(BiometricAuth.name) login for Smart Flow.") {
                                         faceIDEnabled = true
                                     }
                                 }
@@ -221,7 +221,7 @@ struct ProfileSettingsView: View {
 }
 
 // The Change Password screen. Checks the current password, then saves the new one.
-// PasswordVault (in Safety_FirstApp.swift) saves it in the iPhone Keychain, so the new password works at the next login.
+// PasswordVault (in SmartFlowApp.swift) saves it in the iPhone Keychain, so the new password works at the next login.
 struct ChangePasswordSheet: View {
     // dismiss() closes this sheet.
     @Environment(\.dismiss) private var dismiss
@@ -320,7 +320,7 @@ struct HelpView: View {
         HelpTopic(question: "The keyboard won't go away",
                   answer: "• Tap Done in the bar just above the keyboard."),
         HelpTopic(question: "Face ID doesn't show up",
-                  answer: "• Turn it on in Settings > Profile & Settings > Log in with Face ID.\n• Make sure Face ID is set up in the iPhone's Settings > Face ID & Passcode, and that The Wealth App is allowed to use it.\n• In the Simulator, choose Features > Face ID > Enrolled."),
+                  answer: "• Turn it on in Settings > Profile & Settings > Log in with Face ID.\n• Make sure Face ID is set up in the iPhone's Settings > Face ID & Passcode, and that Smart Flow is allowed to use it.\n• In the Simulator, choose Features > Face ID > Enrolled."),
         HelpTopic(question: "The app is frozen or acting strange",
                   answer: "• Swipe up from the bottom of the screen (or double-press Home), swipe the app away, then reopen it.\n• Restart your iPhone.\n• Make sure iOS is up to date in Settings > General > Software Update.")
     ]

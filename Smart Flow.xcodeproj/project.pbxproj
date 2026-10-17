@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		42BC70DCD5543540B0004400 /* BiometricAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8E63192C73A05351484EC7 /* BiometricAuth.swift */; };
-		636FF35C27BA1B6B00F9DC41 /* Safety_FirstApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636FF35B27BA1B6B00F9DC41 /* Safety_FirstApp.swift */; };
+		636FF35C27BA1B6B00F9DC41 /* SmartFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636FF35B27BA1B6B00F9DC41 /* SmartFlowApp.swift */; };
 		636FF35E27BA1B6B00F9DC41 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636FF35D27BA1B6B00F9DC41 /* ContentView.swift */; };
 		636FF36027BA1B6C00F9DC41 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 636FF35F27BA1B6C00F9DC41 /* Assets.xcassets */; };
 		636FF36327BA1B6C00F9DC41 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 636FF36227BA1B6C00F9DC41 /* Preview Assets.xcassets */; };
@@ -23,8 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		636FF35827BA1B6B00F9DC41 /* Safety First.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Safety First.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		636FF35B27BA1B6B00F9DC41 /* Safety_FirstApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Safety_FirstApp.swift; sourceTree = "<group>"; };
+		636FF35827BA1B6B00F9DC41 /* Smart Flow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Smart Flow.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		636FF35B27BA1B6B00F9DC41 /* SmartFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFlowApp.swift; sourceTree = "<group>"; };
 		636FF35D27BA1B6B00F9DC41 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		636FF35F27BA1B6C00F9DC41 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		636FF36227BA1B6C00F9DC41 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -54,7 +54,7 @@
 		636FF34F27BA1B6B00F9DC41 = {
 			isa = PBXGroup;
 			children = (
-				636FF35A27BA1B6B00F9DC41 /* Safety First */,
+				636FF35A27BA1B6B00F9DC41 /* Smart Flow */,
 				636FF35927BA1B6B00F9DC41 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,15 +62,15 @@
 		636FF35927BA1B6B00F9DC41 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				636FF35827BA1B6B00F9DC41 /* Safety First.app */,
+				636FF35827BA1B6B00F9DC41 /* Smart Flow.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		636FF35A27BA1B6B00F9DC41 /* Safety First */ = {
+		636FF35A27BA1B6B00F9DC41 /* Smart Flow */ = {
 			isa = PBXGroup;
 			children = (
-				636FF35B27BA1B6B00F9DC41 /* Safety_FirstApp.swift */,
+				636FF35B27BA1B6B00F9DC41 /* SmartFlowApp.swift */,
 				636FF35D27BA1B6B00F9DC41 /* ContentView.swift */,
 				636FF35F27BA1B6C00F9DC41 /* Assets.xcassets */,
 				D3F92B7C3065839D0036A986 /* NetworkMonitor.swift */,
@@ -85,7 +85,7 @@
 				B0B1000000000000000000B1 /* BusinessProfile.swift */,
 				636FF36127BA1B6C00F9DC41 /* Preview Content */,
 			);
-			path = "Safety First";
+			path = "Smart Flow";
 			sourceTree = "<group>";
 		};
 		636FF36127BA1B6C00F9DC41 /* Preview Content */ = {
@@ -99,9 +99,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		636FF35727BA1B6B00F9DC41 /* Safety First */ = {
+		636FF35727BA1B6B00F9DC41 /* Smart Flow */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 636FF36627BA1B6C00F9DC41 /* Build configuration list for PBXNativeTarget "Safety First" */;
+			buildConfigurationList = 636FF36627BA1B6C00F9DC41 /* Build configuration list for PBXNativeTarget "Smart Flow" */;
 			buildPhases = (
 				636FF35427BA1B6B00F9DC41 /* Sources */,
 				636FF35527BA1B6B00F9DC41 /* Frameworks */,
@@ -111,11 +111,11 @@
 			);
 			dependencies = (
 			);
-			name = "Safety First";
+			name = "Smart Flow";
 			packageProductDependencies = (
 			);
-			productName = "Safety First";
-			productReference = 636FF35827BA1B6B00F9DC41 /* Safety First.app */;
+			productName = "Smart Flow";
+			productReference = 636FF35827BA1B6B00F9DC41 /* Smart Flow.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -133,7 +133,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 636FF35327BA1B6B00F9DC41 /* Build configuration list for PBXProject "Safety First" */;
+			buildConfigurationList = 636FF35327BA1B6B00F9DC41 /* Build configuration list for PBXProject "Smart Flow" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -148,7 +148,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				636FF35727BA1B6B00F9DC41 /* Safety First */,
+				636FF35727BA1B6B00F9DC41 /* Smart Flow */,
 			);
 		};
 /* End PBXProject section */
@@ -173,7 +173,7 @@
 				D3F92B8730658D970036A986 /* Bluetooth Monitor.swift in Sources */,
 				D3F92B9030658E000036A986 /* NetworkMonitor.swift in Sources */,
 				636FF35E27BA1B6B00F9DC41 /* ContentView.swift in Sources */,
-				636FF35C27BA1B6B00F9DC41 /* Safety_FirstApp.swift in Sources */,
+				636FF35C27BA1B6B00F9DC41 /* SmartFlowApp.swift in Sources */,
 				42BC70DCD5543540B0004400 /* BiometricAuth.swift in Sources */,
 				B0B1000000000000000000A4 /* BusinessViews.swift in Sources */,
 				B0B1000000000000000000A7 /* OverviewCharts.swift in Sources */,
@@ -314,14 +314,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Safety First/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Smart Flow/Preview Content\"";
 				DEVELOPMENT_TEAM = 3G388SFS3V;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Safety First/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "The Wealth App";
+				INFOPLIST_FILE = "Smart Flow/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Smart Flow";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Used to check whether Bluetooth is turned on.";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Lets you log in to The Wealth App with Face ID instead of your password.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Lets you log in to Smart Flow with Face ID instead of your password.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Lets you take a picture of a financial document so the app can read its numbers.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -334,7 +334,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.briansanchez.thewealthapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briansanchez.smartflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -349,14 +349,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Safety First/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Smart Flow/Preview Content\"";
 				DEVELOPMENT_TEAM = 3G388SFS3V;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Safety First/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "The Wealth App";
+				INFOPLIST_FILE = "Smart Flow/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Smart Flow";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Used to check whether Bluetooth is turned on.";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Lets you log in to The Wealth App with Face ID instead of your password.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Lets you log in to Smart Flow with Face ID instead of your password.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Lets you take a picture of a financial document so the app can read its numbers.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -369,7 +369,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.briansanchez.thewealthapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briansanchez.smartflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -380,7 +380,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		636FF35327BA1B6B00F9DC41 /* Build configuration list for PBXProject "Safety First" */ = {
+		636FF35327BA1B6B00F9DC41 /* Build configuration list for PBXProject "Smart Flow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				636FF36427BA1B6C00F9DC41 /* Debug */,
@@ -389,7 +389,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		636FF36627BA1B6C00F9DC41 /* Build configuration list for PBXNativeTarget "Safety First" */ = {
+		636FF36627BA1B6C00F9DC41 /* Build configuration list for PBXNativeTarget "Smart Flow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				636FF36727BA1B6C00F9DC41 /* Debug */,

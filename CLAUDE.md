@@ -1,9 +1,9 @@
-# The Wealth App — guide for Claude
+# Smart Flow — guide for Claude
 
 Student project (UW–Green Bay hackathon). A SwiftUI iOS app that gives a small business a financial checkup. Users answer questions, or upload or photograph financial documents that OpenAI reads.
 
 ## Layout
-- `Safety First/` — SwiftUI app (iOS 15.2+, Swift 5). 5 tabs: Overview, Interview, Import, Results, Settings.
+- `Smart Flow/` — SwiftUI app (iOS 15.2+, Swift 5). 5 tabs: Overview, Interview, Import, Results, Settings.
   - `BusinessProfile.swift` — the single source of truth for the ~40 questions (`BusinessField`) and all financial math (`BusinessMetrics`: DSCR, cash coverage, runway, current ratio). New questions or metrics go here only, never in views.
   - `AIServices.swift`, `BusinessAIAgents.swift` — OpenAI Responses API calls. Each feature's model is set in `AIFeature.model`. `BusinessDocumentReader` reads uploaded files and photos.
   - `BusinessViews.swift` — large file of views, including document import (file, photo library, camera). Split it only when a task requires it, one view at a time.
@@ -29,9 +29,9 @@ Student project (UW–Green Bay hackathon). A SwiftUI iOS app that gives a small
 
 ## Verify every change
 - iOS build (must pass):
-  `xcodebuild -project "Safety First.xcodeproj" -scheme "Safety First" -destination 'generic/platform=iOS Simulator' build 2>&1 | tail -30`
+  `xcodebuild -project "Smart Flow.xcodeproj" -scheme "Smart Flow" -destination 'generic/platform=iOS Simulator' build 2>&1 | tail -30`
 - Unit tests (once a test target exists):
-  `xcodebuild test -project "Safety First.xcodeproj" -scheme "Safety First" -destination 'platform=iOS Simulator,name=<any installed iPhone>'`
+  `xcodebuild test -project "Smart Flow.xcodeproj" -scheme "Smart Flow" -destination 'platform=iOS Simulator,name=<any installed iPhone>'`
 - When changing `BusinessMetrics`: write or update a unit test first, watch it fail, then make the fix.
 - UI changes: run the app in the Simulator and take a screenshot of the affected screen. The camera button only appears on a real iPhone.
 - Report exactly which checks you ran and what they showed. Never say something works without running a check.
@@ -49,7 +49,7 @@ Student project (UW–Green Bay hackathon). A SwiftUI iOS app that gives a small
 - Don't edit `project.pbxproj` by hand unless the task requires it, and say so if you do.
 
 ## New device setup
-1. Clone the repo. Open `Safety First.xcodeproj` in Xcode 16.1+.
+1. Clone the repo. Open `Smart Flow.xcodeproj` in Xcode 16.1+.
 2. Simulator builds need no signing changes. To run on a real iPhone, pick your own team under Signing & Capabilities, and don't commit that change.
 3. Enter an OpenAI API key in the app's Settings (stored in the Keychain), or set `OPENAI_API_KEY` in the Xcode scheme's environment without committing the scheme change. Never send keys over chat or commit them.
 

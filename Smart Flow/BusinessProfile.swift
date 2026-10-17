@@ -1,6 +1,6 @@
 //
 //  BusinessProfile.swift
-//  Safety First
+//  Smart Flow
 //
 // BUSINESS CHECKUP: the data side. The whole app is built around this (see the tabs in ContentView.swift).
 // It asks about revenue, payroll, operating costs, business debt, cash and goals,

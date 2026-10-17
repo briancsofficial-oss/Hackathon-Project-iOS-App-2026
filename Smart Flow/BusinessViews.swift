@@ -1,6 +1,6 @@
 //
 //  BusinessViews.swift
-//  Safety First
+//  Smart Flow
 //
 // BUSINESS CHECKUP: the screens. Four of them are tabs (see ContentView in ContentView.swift):
 //   BusinessCheckupView        = Overview tab: first-glance charts, progress, ways to answer

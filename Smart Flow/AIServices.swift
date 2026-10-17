@@ -1,6 +1,6 @@
 //
 //  AIServices.swift
-//  Safety First
+//  Smart Flow
 //
 // The cloud AI layer. Everything uses the OpenAI API (the Responses API, POST /v1/responses):
 //
@@ -84,7 +84,7 @@ enum AIError: LocalizedError {
 // For development you can instead set OPENAI_API_KEY in
 // Product > Scheme > Edit Scheme > Run > Environment Variables (only works when run from Xcode).
 enum AIKeyVault {
-    private static let service = "TheWealthApp.aiKeys"
+    private static let service = "SmartFlow.aiKeys"
 
     static func key(for provider: AIProvider) -> String? {
         if let saved = read(provider), !saved.isEmpty { return saved }

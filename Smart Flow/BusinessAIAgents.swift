@@ -1,6 +1,6 @@
 //
 //  BusinessAIAgents.swift
-//  Safety First
+//  Smart Flow
 //
 // The three AI features of the Business checkup, all on OpenAI (models are chosen in AIServices.swift):
 //   BusinessInterviewAgent  = chats with the owner phase by phase and SAVES each answer by
@@ -160,7 +160,7 @@ final class BusinessInterviewAgent: ObservableObject {
         let nextPhase = BusinessPhase.allCases.first { !profile.isComplete($0) }
 
         return """
-        You are the Business Checkup interviewer inside The Wealth App, an educational finance app.
+        You are the Business Checkup interviewer inside Smart Flow, an educational finance app.
         Your job is to collect a small business owner's financial information through friendly conversation, \
         in 6 phases: Revenue & Income, Payroll & People, Operating Costs, Business Debt, Cash & Working Capital, Goals & Horizon.
 

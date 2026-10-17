@@ -1,10 +1,10 @@
 //
-//  Safety_FirstApp.swift
-//  Safety First
+//  SmartFlowApp.swift
+//  Smart Flow
 //
 //  Created by Farzana  on 9/18/23.
 //
-// Safety_FirstApp
+// SmartFlowApp
 // SwiftUI is Apple's framework for building the user interface.
 import SwiftUI
 // CryptoKit = Apple's API for hashing (turning the password into a scrambled fingerprint we can compare safely).
@@ -15,7 +15,7 @@ import Security
 // @main marks where the app starts. iOS runs this struct first when the app launches.
 @main
 // The app itself. ": App" means this struct describes an app (not a single screen).
-struct Safety_FirstAppswift: App {
+struct SmartFlowApp: App {
     // calling network and bluetooth.
     @StateObject private var network = NetworkMonitor()
     @StateObject private var bluetooth = BluetoothMonitor()
@@ -73,7 +73,7 @@ enum PasswordVault {
     // SHA-256 hash of the default password (the one you were given for this demo).
     private static let defaultPasswordHash = "9a72c3f322b7c34eef4c4558f6114664956bbcd448da5fa4377185a188b6a4ce"
     // Labels that identify our item inside the Keychain.
-    private static let service = "TheWealthApp.login"
+    private static let service = "SmartFlow.login"
     private static let account = "passwordHash"
 
     // Turns text into its SHA-256 hash, written as 64 hex characters.
@@ -161,7 +161,7 @@ struct LoginView: View {
             Image(systemName: "dollarsign.building.classical")
                 .font(.system(size: 64))
                 .foregroundColor(brandColor)
-            Text("The Wealth App")
+            Text("Smart Flow")
                 .font(.largeTitle).bold()
                 .foregroundColor(brandColor)
             Text("Sign in to continue")
@@ -231,7 +231,7 @@ struct LoginView: View {
     // Shows the Face ID prompt; logs in if it's the phone's owner.
     private func attemptFaceID() {
         Task {
-            if await BiometricAuth.authenticate(reason: "Log in to The Wealth App.") {
+            if await BiometricAuth.authenticate(reason: "Log in to Smart Flow.") {
                 showError = false
                 withAnimation { isLoggedIn = true }
             }

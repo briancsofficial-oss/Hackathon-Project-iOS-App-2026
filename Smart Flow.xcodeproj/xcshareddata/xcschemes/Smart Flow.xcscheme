@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "636FF35727BA1B6B00F9DC41"
-               BuildableName = "Safety First.app"
-               ReferencedContainer = "container:Safety First.xcodeproj">
+               BuildableName = "Smart Flow.app"
+               ReferencedContainer = "container:Smart Flow.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "636FF35727BA1B6B00F9DC41"
-            BuildableName = "Safety First.app"
-            ReferencedContainer = "container:Safety First.xcodeproj">
+            BuildableName = "Smart Flow.app"
+            ReferencedContainer = "container:Smart Flow.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -61,8 +61,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "636FF35727BA1B6B00F9DC41"
-            BuildableName = "Safety First.app"
-            ReferencedContainer = "container:Safety First.xcodeproj">
+            BuildableName = "Smart Flow.app"
+            ReferencedContainer = "container:Smart Flow.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
