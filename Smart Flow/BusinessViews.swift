@@ -131,19 +131,19 @@ struct BusinessRowLabel: View {
             HStack(spacing: 14) {
                 Image(systemName: icon)
                     .font(.system(size: 19))
-                    .foregroundColor(brandColor)
+                    .foregroundColor(cream)
                     .frame(width: 42, height: 42)
-                    .background(Circle().fill(pillBackground))
+                    .background(Circle().fill(cream.opacity(0.12)))
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title).font(.system(size: 17, weight: .medium))
-                    Text(subtitle).font(.system(size: 14)).foregroundColor(.gray)
+                    Text(subtitle).font(.system(size: 14)).foregroundColor(cream.opacity(0.7))
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.gray)
+                    .foregroundColor(cream.opacity(0.6))
             }
-            .foregroundColor(.primary)
+            .foregroundColor(cream)
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
             .contentShape(Rectangle())
@@ -176,7 +176,6 @@ struct BusinessInterviewView: View {
             .pickerStyle(.segmented)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
-            .background(cardBackground)
 
             if router.interviewMode == .chat {
                 chatContent
@@ -269,14 +268,13 @@ struct BusinessInterviewView: View {
                         .font(.system(size: 13, weight: .medium))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
-                        .foregroundColor(done ? .white : linkColor)
-                        .background(Capsule().fill(done ? confirmGreen : pillBackground))
+                        .foregroundColor(cream)
+                        .background(Capsule().fill(brandColor))
                 }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
         }
-        .background(cardBackground)
     }
 
     private var introCard: some View {
@@ -298,7 +296,7 @@ struct BusinessInterviewView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 14).fill(brandColor))
+        .background(RoundedRectangle(cornerRadius: 14).fill(accentTeal))
     }
 
     private func chatBubble(_ line: BusinessChatLine) -> some View {
@@ -336,7 +334,7 @@ struct BusinessInterviewView: View {
             messageField
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .background(RoundedRectangle(cornerRadius: 20).fill(pageBackground))
+                .background(RoundedRectangle(cornerRadius: 20).fill(cardBackground))
             Button {
                 agent.send(draft)
                 draft = ""
@@ -350,7 +348,6 @@ struct BusinessInterviewView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(cardBackground)
     }
 
     @ViewBuilder private var messageField: some View {
@@ -385,9 +382,16 @@ struct BusinessPhasesList: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                AccountSection(title: "Phases") {
+                VStack(spacing: 0) {
+                    Text("Phases")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(cream)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 18)
+                        .padding(.bottom, 2)
                     ForEach(BusinessPhase.allCases) { phase in
-                        if phase != .revenue { Divider().padding(.leading, 76) }
+                        if phase != .revenue { Rectangle().fill(cream.opacity(0.15)).frame(height: 1).padding(.leading, 76) }
                         BusinessRow(title: "\(phase.rawValue + 1). \(phase.title)",
                                     subtitle: status(phase),
                                     icon: profile.isComplete(phase) ? "checkmark.circle.fill" : phase.icon) {
@@ -395,6 +399,7 @@ struct BusinessPhasesList: View {
                         }
                     }
                 }
+                .background(RoundedRectangle(cornerRadius: 16).fill(brandColor))
             }
             .padding(16)
         }

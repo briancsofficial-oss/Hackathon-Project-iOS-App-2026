@@ -12,8 +12,8 @@ let pageBackground = adaptive(light: (0.96, 0.93, 0.89), dark: (0.07, 0.07, 0.07
 let cardBackground = adaptive(light: (1.0, 1.0, 1.0), dark: (0.13, 0.13, 0.13))
 let confirmGreen = adaptive(light: (0.13, 0.47, 0.36), dark: (0.35, 0.78, 0.58))
 
-let linkColor = adaptive(light: (0.07, 0.07, 0.07), dark: (0.96, 0.93, 0.89))
-let pillBackground = adaptive(light: (0.96, 0.93, 0.89), dark: (0.22, 0.22, 0.22))
+let cream = Color(red: 0.96, green: 0.93, blue: 0.89)
+let accentTeal = adaptive(light: (0.05, 0.50, 0.50), dark: (0.10, 0.42, 0.42))
 let highlightBackground = adaptive(light: (0.97, 0.72, 0.79), dark: (0.42, 0.24, 0.31))
 
 extension View {
