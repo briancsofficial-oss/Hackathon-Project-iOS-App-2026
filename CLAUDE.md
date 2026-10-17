@@ -17,7 +17,7 @@ Student project (UW–Green Bay hackathon). A SwiftUI iOS app that gives a small
 4. **Goal-driven.** Before editing, state how success will be checked. Finish by running that check and reporting the result. For multi-step work, give each step its own check.
 
 ## Code style
-- Keep the beginner-friendly comments: short plain-English notes explaining *why*. New code gets comments at the same density. Never delete an explanatory comment unless the code it describes is gone.
+- No comments in the code. Don't add `//` or `/* */` comments, including doc comments and file headers. Explain *why* in the commit message or `docs/decisions.md` instead.
 - SwiftUI: small `View` structs, using `@State` / `@StateObject` / `@EnvironmentObject` the way the existing code does. No Swift packages.
 - Money and metric math lives only in `BusinessMetrics`. The AI gets numbers from `summaryForAI` and never does its own math.
 
