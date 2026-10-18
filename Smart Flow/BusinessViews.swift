@@ -16,7 +16,10 @@ struct BusinessCheckupView: View {
                 actionBar
                 progressCard
                 CashSplitCard(profile: profile) { router.selected = .interview }
-                CashRunwayCard(profile: profile)
+                CashRunwayCard(profile: profile) {
+                    router.interviewMode = .phases
+                    router.selected = .interview
+                }
             }
             .padding(16)
         }
@@ -1071,6 +1074,19 @@ struct BusinessResultsView: View {
                     ProgressView()
                     Text("Writing your plan…").foregroundColor(.secondary)
                 }
+            } else if let structured = ActionPlan.decode(plan) {
+                Text(markdown(structured.summary))
+                    .font(.system(size: 15))
+                    .textSelection(.enabled)
+                ForEach(Array(structured.steps.enumerated()), id: \.offset) { index, step in
+                    planStep(index + 1, step)
+                }
+                Text(BusinessPlanWriter.disclaimer)
+                    .font(.system(size: 12)).foregroundColor(.gray)
+                if !planDate.isEmpty {
+                    Text("Written \(planDate). Regenerate after changing answers.")
+                        .font(.system(size: 12)).foregroundColor(.gray)
+                }
             } else if !plan.isEmpty {
                 Text(markdown(plan))
                     .font(.system(size: 15))
@@ -1099,6 +1115,25 @@ struct BusinessResultsView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func planStep(_ number: Int, _ step: ActionPlan.Step) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 10) {
+                Text("\(number)")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(cream)
+                    .frame(width: 24, height: 24)
+                    .background(Circle().fill(brandColor))
+                Text(markdown(step.title))
+                    .font(.system(size: 16, weight: .semibold))
+            }
+            Text(markdown(step.detail))
+                .font(.system(size: 15))
+                .textSelection(.enabled)
+            PlanChartView(chart: step.chartKind, profile: p)
+        }
+        .padding(.top, 4)
     }
 
     private func writePlan() {

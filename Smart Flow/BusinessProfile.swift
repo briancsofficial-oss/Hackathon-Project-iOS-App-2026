@@ -441,6 +441,9 @@ struct BusinessMetrics {
         p[.termLoanPayment] + p[.locPayment] + p[.equipmentPayment] + p[.cardMinimum] + p[.mcaPayment]
     }
 
+    var monthlyIncome: Double { monthlyRevenue + p[.otherIncome] }
+    var monthlyOutflow: Double { monthlyCOGS + payrollCost + operatingCost + debtService }
+
     var netOperatingIncome: Double { grossProfit - payrollCost - operatingCost }
     var netCashFlow: Double { netOperatingIncome - debtService }
 

@@ -278,18 +278,80 @@ enum BusinessDocumentReader {
     }
 }
 
+enum PlanChart: String, CaseIterable {
+    case none
+    case cashRunway = "cash_runway"
+    case debtCoverage = "debt_coverage"
+    case payrollShare = "payroll_share"
+    case currentRatio = "current_ratio"
+    case cashFlow = "cash_flow"
+    case expenseBreakdown = "expense_breakdown"
+    case debtBalances = "debt_balances"
+}
+
+struct ActionPlan: Codable {
+    struct Step: Codable {
+        let title: String
+        let detail: String
+        let chart: String
+
+        var chartKind: PlanChart { PlanChart(rawValue: chart) ?? .none }
+    }
+
+    let summary: String
+    let steps: [Step]
+
+    static func decode(_ text: String) -> ActionPlan? {
+        try? JSONDecoder().decode(ActionPlan.self, from: Data(text.utf8))
+    }
+}
+
 enum BusinessPlanWriter {
+    static let disclaimer = "This is educational, not professional advice. For tax, legal or lending decisions, talk to a CPA or advisor."
+
     static func write(for profile: BusinessProfile) async throws -> String {
         let metrics = BusinessMetrics(p: profile)
         let system = """
         You are a small-business finance coach inside an educational app. Write a practical action plan.
         Use ONLY the answers and calculated metrics provided; never recalculate or invent figures. Quote the dollar amounts given.
-        Format: a one-sentence overall read, then 3 to 5 numbered steps ordered by urgency. Each step: a bold short title, \
-        then 1-2 sentences on what to do and why, tied to a specific number. Priorities in general: past-due taxes, \
+        Format: summary is a one-sentence overall read. Then 3 to 5 steps ordered by urgency. Each step has a short title \
+        and 1-2 sentences of detail on what to do and why, tied to a specific number. Priorities in general: past-due taxes, \
         cash runway under 3 months, DSCR under 1.25, expensive debt such as merchant cash advances and card balances, \
         then the owner's stated goal and timeline.
-        Under 250 words. End with: "This is educational, not professional advice. For tax, legal or lending decisions, talk to a CPA or advisor."
+        Charts: the app draws charts from its own numbers. For each step pick the one chart that makes that step clearer, \
+        or "none". Use charts only where they help: at most 3 in the whole plan, never the same chart twice, \
+        and never a chart whose metric is n/a.
+        - cash_runway: months of fixed costs the cash covers, against a 3-month target
+        - debt_coverage: DSCR against the 1.25x lender target
+        - payroll_share: payroll as a share of revenue
+        - current_ratio: short-term assets against short-term debts
+        - cash_flow: monthly money in, money out and net cash flow
+        - expense_breakdown: where monthly spending goes
+        - debt_balances: balances owed by type
+        Under 250 words in total. Don't add a disclaimer; the app shows one.
         """
+        let schema: [String: Any] = [
+            "type": "object",
+            "properties": [
+                "summary": ["type": "string", "description": "One-sentence overall read."],
+                "steps": [
+                    "type": "array",
+                    "items": [
+                        "type": "object",
+                        "properties": [
+                            "title": ["type": "string", "description": "Short step title."],
+                            "detail": ["type": "string", "description": "1-2 sentences tied to a specific number."],
+                            "chart": ["type": "string", "enum": PlanChart.allCases.map(\.rawValue),
+                                      "description": "The chart that supports this step, or none."],
+                        ] as [String: Any],
+                        "required": ["title", "detail", "chart"],
+                        "additionalProperties": false,
+                    ] as [String: Any],
+                ] as [String: Any],
+            ] as [String: Any],
+            "required": ["summary", "steps"],
+            "additionalProperties": false,
+        ]
         let prompt = """
         Business answers:
         \(profile.summaryForAI)
@@ -297,7 +359,10 @@ enum BusinessPlanWriter {
         Calculated by the app:
         \(metrics.summaryForAI)
         """
-        return try await OpenAIClient.generate(prompt: prompt, instructions: system,
-                                               model: AIFeature.actionPlan.model)
+        let text = try await OpenAIClient.generate(prompt: prompt, instructions: system,
+                                                   jsonSchema: (name: "action_plan", schema: schema),
+                                                   model: AIFeature.actionPlan.model)
+        guard ActionPlan.decode(text) != nil else { throw AIError.unreadable(.openAI) }
+        return text
     }
 }
