@@ -25,6 +25,32 @@ struct CashRunwayCard: View {
         .sheet(isPresented: $editingCash) { CashOnHandSheet() }
     }
 
+    private var projection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Divider()
+            Text("Projected cash balance")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.secondary)
+            HStack {
+                ForEach([3, 6, 12], id: \.self) { months in
+                    let cash = m.projectedCash(afterMonths: months)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("In \(months) mo").font(.system(size: 12)).foregroundColor(.gray)
+                        Text(money(cash))
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(cash < 0 ? .red : .primary)
+                            .minimumScaleFactor(0.7)
+                            .lineLimit(1)
+                    }
+                    if months != 12 { Spacer() }
+                }
+            }
+            Text("If this month's net cash flow of \(money(m.netCashFlow)) repeats.")
+                .font(.system(size: 12))
+                .foregroundColor(.gray)
+        }
+    }
+
     @ViewBuilder private var actions: some View {
         if !profile.isAnswered(.cashOnHand) {
             Button { editingCash = true } label: {
@@ -64,6 +90,7 @@ struct CashRunwayCard: View {
                     Text("\(money(profile[.cashOnHand])) cash ÷ \(money(m.fixedMonthlyCosts)) a month in payroll, operating costs and debt payments.")
                         .font(.system(size: 13))
                         .foregroundColor(.gray)
+                    projection
                     if let runway = m.runwayMonths {
                         Label(String(format: "Losing %@ a month, so the cash runs out in about %.1f months.", money(-m.netCashFlow), runway),
                               systemImage: "exclamationmark.triangle.fill")

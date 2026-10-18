@@ -266,6 +266,8 @@ enum BusinessFocus: String, CaseIterable {
     case growRevenue = "Grow revenue"
     case reduceDebt = "Pay down business debt"
     case cashReserve = "Build a cash reserve"
+    case equipment = "Invest in equipment"
+    case efficiency = "Improve operating efficiency"
     case hire = "Hire or expand"
     case financing = "Get ready for a loan or financing"
     case exit = "Prepare to sell the business"
@@ -274,6 +276,25 @@ enum BusinessFocus: String, CaseIterable {
 struct BusinessProfile: Codable, Equatable {
     var numbers: [String: Double] = [:]
     var texts: [String: String] = [:]
+
+    static var sample: BusinessProfile {
+        let answers: [BusinessField: Any] = [
+            .businessName: "Lakeshore Woodworks (sample)", .industry: "Furniture manufacturing",
+            .entityType: "LLC", .yearsInBusiness: 6, .annualRevenue: 960_000, .cogsPercent: 38,
+            .recurringPercent: 15, .isSeasonal: "Yes", .slowMonthRevenue: 55_000, .otherIncome: 0,
+            .w2Employees: 6, .contractors: 1, .payrollFrequency: "Every two weeks",
+            .grossPayroll: 22_000, .employerCosts: 3_300, .contractorPay: 1_500, .ownerPay: 6_000,
+            .rent: 4_800, .insurance: 900, .softwareMarketing: 1_200, .otherOperating: 2_500,
+            .termLoanPayment: 2_100, .termLoanBalance: 72_000, .locLimit: 50_000, .locBalance: 18_000,
+            .locPayment: 600, .equipmentPayment: 1_400, .cardBalance: 9_000, .cardMinimum: 300,
+            .mcaPayment: 0, .owesBackTaxes: "No", .cashOnHand: 52_000, .accountsReceivable: 38_000,
+            .daysToGetPaid: 38, .accountsPayable: 21_000, .inventoryValue: 30_000, .taxReserve: 8_000,
+            .primaryFocus: BusinessFocus.equipment.rawValue, .timeline: "Medium-term (1–3 years)",
+        ]
+        var profile = BusinessProfile()
+        for (field, value) in answers { profile.set(field, from: value) }
+        return profile
+    }
 
     subscript(_ field: BusinessField) -> Double {
         numbers[field.rawValue] ?? 0
@@ -479,6 +500,8 @@ struct BusinessMetrics {
     }
 
     var runwayMonths: Double? { netCashFlow < 0 ? p[.cashOnHand] / -netCashFlow : nil }
+
+    func projectedCash(afterMonths months: Int) -> Double { p[.cashOnHand] + netCashFlow * Double(months) }
 
     var currentAssets: Double { p[.cashOnHand] + p[.accountsReceivable] + p[.inventoryValue] }
     var currentLiabilities: Double { p[.accountsPayable] + p[.locBalance] + p[.cardBalance] + p[.backTaxesOwed] }

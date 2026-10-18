@@ -292,6 +292,8 @@ struct HelpView: View {
                   answer: "• Go to Settings > AI key (OpenAI) and paste your OpenAI API key. One key runs the AI interview, document import and action plan.\n• Keys come from platform.openai.com > API keys. The account needs billing or credit turned on."),
         HelpTopic(question: "The AI shows an error",
                   answer: "• Check that the phone is online (Settings > This device).\n• \"Didn't accept the API key\" means the key is wrong or was revoked: save a new one in Settings > AI key (OpenAI).\n• \"Rate-limiting\" means too many requests or no credit left. Wait a minute or add credit.\n• Your answers are saved as you go, so tap Try again or restart the interview without losing anything."),
+        HelpTopic(question: "Can I try the app without my own numbers?",
+                  answer: "• Yes. Go to Settings > Load sample business to fill every phase with Lakeshore Woodworks, a made-up furniture maker.\n• It replaces your current answers, so Smart Flow asks first. Use Settings > Clear all business answers to start over."),
         HelpTopic(question: "How do I add my cash on hand?",
                   answer: "• On the Overview, tap Add cash on hand on the Cash runway card. Tap Update cash on hand to change it later.\n• The runway also needs your monthly costs. If they're missing, tap Add monthly costs, or answer them in Interview > Phases."),
         HelpTopic(question: "How do I see daily or yearly cash flow?",
@@ -349,6 +351,7 @@ struct BusinessSettingsView: View {
     @ObservedObject private var store = BusinessStore.shared
     @ObservedObject private var keys = AIKeyStatus.shared
     @State private var confirmClear = false
+    @State private var confirmSample = false
 
     var body: some View {
         List {
@@ -374,6 +377,11 @@ struct BusinessSettingsView: View {
                     Label("Clear all business answers", systemImage: "trash")
                 }
                 .disabled(store.profile.isEmpty)
+                Button {
+                    if store.profile.isEmpty { store.profile = .sample } else { confirmSample = true }
+                } label: {
+                    Label("Load sample business", systemImage: "wand.and.stars")
+                }
             }
 
             Section(header: Text("Account")) {
@@ -419,6 +427,11 @@ struct BusinessSettingsView: View {
         .listStyle(.insetGrouped)
         .creamListBackground()
         .navigationTitle("Settings")
+        .confirmationDialog("Replace your answers with a sample business?", isPresented: $confirmSample, titleVisibility: .visible) {
+            Button("Load sample business", role: .destructive) { store.profile = .sample }
+        } message: {
+            Text("Lakeshore Woodworks is made-up data for demos. Your current answers will be replaced.")
+        }
         .confirmationDialog("Clear every business answer?", isPresented: $confirmClear, titleVisibility: .visible) {
             Button("Clear answers", role: .destructive) { store.reset() }
         }
