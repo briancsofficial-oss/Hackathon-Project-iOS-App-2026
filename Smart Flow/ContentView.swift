@@ -56,6 +56,13 @@ struct AppInfoView: View {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
 
+    private let githubs = [
+        (name: "Brian Sanchez", handle: "briancsofficial-oss"),
+        (name: "Chaewon Yoon", handle: "chaewon-research"),
+        (name: "Jasmine Maduafokwa", handle: "jmaduafo"),
+        (name: "Sarah Richards", handle: "sarahmuench1313-dev")
+    ]
+
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
@@ -82,8 +89,23 @@ struct AppInfoView: View {
                     Text("Team")
                         .font(.caption).foregroundColor(.secondary)
                         .padding(.top, 8)
-                    Text("Chaewon · Jasmin · Sarah")
+                    Text("Chaewon Yoon · Jasmine Maduafokwa · Sarah Richards")
                         .font(.headline)
+                        .multilineTextAlignment(.center)
+                    Text("Team GitHubs")
+                        .font(.caption).foregroundColor(.secondary)
+                        .padding(.top, 8)
+                    ForEach(githubs, id: \.name) { member in
+                        HStack {
+                            Text(member.name)
+                                .font(.subheadline)
+                            Spacer()
+                            Link(member.handle, destination: URL(string: "https://github.com/\(member.handle)")!)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundColor(brandColor)
+                                .underline()
+                        }
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -110,7 +132,7 @@ struct CopyrightPrivacyView: View {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Copyright")
                     .font(.headline)
-                Text("© 2026 UWGB Hackathon Group. Lead developer: Brian Sanchez. Team: Chaewon, Jasmin and Sarah. All rights reserved in the original code, text and design of Smart Flow.")
+                Text("© 2026 UWGB Hackathon Group. Lead developer: Brian Sanchez. Team: Chaewon Yoon, Jasmine Maduafokwa and Sarah Richards. All rights reserved in the original code, text and design of Smart Flow.")
                 Text("Smart Flow was created at the University of Wisconsin–Green Bay Hackathon as an educational project. It helps small-business owners check their finances: cash flow, cash runway, debt coverage and payroll share, with an AI interview, document import and an AI-written action plan. Naming the University of Wisconsin–Green Bay identifies where the project was made and does not imply university endorsement.")
                 Text("Smart Flow is not affiliated with, sponsored by or endorsed by OpenAI, Apple, any bank or any other financial institution. Third-party names, trademarks, code and services belong to their owners and are used under their own terms.")
 
