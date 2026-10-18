@@ -204,7 +204,7 @@ struct BusinessInterviewView: View {
         }
         .sheet(isPresented: $showSettings, onDismiss: { startChatIfReady() }) { AISettingsView() }
         .onAppear { startChatIfReady() }
-        .onChange(of: router.interviewMode) { _ in startChatIfReady() }
+        .onChange(of: router.interviewMode) { startChatIfReady() }
     }
 
     private func startChatIfReady() {
@@ -250,12 +250,12 @@ struct BusinessInterviewView: View {
                     }
                     .padding(16)
                 }
-                .onChange(of: agent.lines.count) { _ in
+                .onChange(of: agent.lines.count) {
                     if let last = agent.lines.last {
                         withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
                     }
                 }
-                .onChange(of: agent.isThinking) { thinking in
+                .onChange(of: agent.isThinking) { _, thinking in
                     if thinking { withAnimation { proxy.scrollTo("thinking", anchor: .bottom) } }
                 }
             }
@@ -816,7 +816,7 @@ struct BusinessPhotoButton: View {
                 .background(RoundedRectangle(cornerRadius: 10).stroke(brandColor, lineWidth: 1.5))
         }
         .disabled(disabled)
-        .onChange(of: items) { picked in
+        .onChange(of: items) { _, picked in
             guard !picked.isEmpty else { return }
             Task {
                 var photos: [Data] = []
