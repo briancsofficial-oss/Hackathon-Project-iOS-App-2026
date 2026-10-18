@@ -602,6 +602,8 @@ struct BusinessDocumentImportView: View {
     @State private var savedCount: Int?
 
     private let maxBytes = 15 * 1024 * 1024
+    private let maxTotalBytes = 50 * 1024 * 1024
+    private let maxItems = 10
     private var hasKey: Bool { AIKeyVault.hasKey(AIFeature.documentImport.provider) }
 
     var body: some View {
@@ -609,12 +611,12 @@ struct BusinessDocumentImportView: View {
             VStack(spacing: 20) {
                 AccountSection(title: "Import a document") {
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("Pick or take a picture of a profit & loss statement, bank statement, payroll report or balance sheet. \(AIFeature.documentImport.provider.rawValue) reads it and suggests answers. You choose what to save.")
+                        Text("Pick up to \(maxItems) files or photos, or take a picture of a profit & loss statement, bank statement, payroll report or balance sheet. \(AIFeature.documentImport.provider.rawValue) reads them together and suggests answers. You choose what to save.")
                             .font(.system(size: 15))
                             .foregroundColor(.gray)
                         if hasKey {
                             Button { showFilePicker = true } label: {
-                                Label("Choose a PDF or image from Files", systemImage: "folder")
+                                Label("Choose PDFs or images from Files", systemImage: "folder")
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                             }
@@ -622,13 +624,16 @@ struct BusinessDocumentImportView: View {
                             .background(RoundedRectangle(cornerRadius: 10).fill(brandColor))
                             .disabled(isReading)
                             if #available(iOS 16.0, *) {
-                                BusinessPhotoButton(disabled: isReading) { data in
-                                    read(AIAttachment(data: data, mimeType: "image/jpeg", filename: "photo.jpg"), name: "Photo")
+                                BusinessPhotoButton(disabled: isReading, maxCount: maxItems) { photos in
+                                    let attachments = photos.enumerated().map {
+                                        AIAttachment(data: $0.element, mimeType: "image/jpeg", filename: "photo\($0.offset + 1).jpg")
+                                    }
+                                    read(attachments, name: photos.count == 1 ? "Photo" : "\(photos.count) photos")
                                 }
                             }
                             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                                 BusinessCameraButton(disabled: isReading) { data in
-                                    read(AIAttachment(data: data, mimeType: "image/jpeg", filename: "photo.jpg"), name: "Photo")
+                                    read([AIAttachment(data: data, mimeType: "image/jpeg", filename: "photo.jpg")], name: "Photo")
                                 }
                             }
                         } else {
@@ -671,11 +676,10 @@ struct BusinessDocumentImportView: View {
         .navigationBarHidden(false)
         .sheet(isPresented: $showSettings) { AISettingsView() }
         .fileImporter(isPresented: $showFilePicker, allowedContentTypes: [.pdf, .image],
-                      allowsMultipleSelection: false) { result in
+                      allowsMultipleSelection: true) { result in
             switch result {
             case .success(let urls):
-                guard let url = urls.first else { return }
-                loadFile(url)
+                loadFiles(urls)
             case .failure(let error):
                 errorText = error.localizedDescription
             }
@@ -736,22 +740,37 @@ struct BusinessDocumentImportView: View {
         return store.profile.isAnswered(field) ? found + " (you entered \(store.profile.formatted(field)))" : found
     }
 
-    private func loadFile(_ url: URL) {
-        let opened = url.startAccessingSecurityScopedResource()
-        defer { if opened { url.stopAccessingSecurityScopedResource() } }
-        do {
-            let data = try Data(contentsOf: url)
-            let type = UTType(filenameExtension: url.pathExtension)
-            let mime = type?.conforms(to: .pdf) == true ? "application/pdf" : (type?.preferredMIMEType ?? "image/jpeg")
-            read(AIAttachment(data: data, mimeType: mime, filename: url.lastPathComponent), name: url.lastPathComponent)
-        } catch {
-            errorText = "Couldn't open that file: \(error.localizedDescription)"
+    private func loadFiles(_ urls: [URL]) {
+        guard !urls.isEmpty else { return }
+        guard urls.count <= maxItems else {
+            errorText = "Pick up to \(maxItems) files at a time."
+            return
         }
+        var attachments: [AIAttachment] = []
+        for url in urls {
+            let opened = url.startAccessingSecurityScopedResource()
+            defer { if opened { url.stopAccessingSecurityScopedResource() } }
+            do {
+                let data = try Data(contentsOf: url)
+                let type = UTType(filenameExtension: url.pathExtension)
+                let mime = type?.conforms(to: .pdf) == true ? "application/pdf" : (type?.preferredMIMEType ?? "image/jpeg")
+                attachments.append(AIAttachment(data: data, mimeType: mime, filename: url.lastPathComponent))
+            } catch {
+                errorText = "Couldn't open \(url.lastPathComponent): \(error.localizedDescription)"
+                return
+            }
+        }
+        read(attachments, name: urls.count == 1 ? urls[0].lastPathComponent : "\(urls.count) files")
     }
 
-    private func read(_ attachment: AIAttachment, name: String) {
-        guard attachment.data.count <= maxBytes else {
-            errorText = "That file is over 15 MB. Try exporting a shorter date range or a smaller PDF."
+    private func read(_ attachments: [AIAttachment], name: String) {
+        guard !attachments.isEmpty else { return }
+        if let big = attachments.first(where: { $0.data.count > maxBytes }) {
+            errorText = "\(big.filename) is over 15 MB. Try exporting a shorter date range or a smaller PDF."
+            return
+        }
+        guard attachments.reduce(0, { $0 + $1.data.count }) <= maxTotalBytes else {
+            errorText = "Those files add up to more than 50 MB. Pick fewer or smaller files."
             return
         }
         fileName = name
@@ -761,7 +780,7 @@ struct BusinessDocumentImportView: View {
         isReading = true
         Task {
             do {
-                let result = try await BusinessDocumentReader.read(attachment)
+                let result = try await BusinessDocumentReader.read(attachments)
                 findings = result
                 selected = Set(result.values.map(\.field))
             } catch {
@@ -775,31 +794,37 @@ struct BusinessDocumentImportView: View {
 @available(iOS 16.0, *)
 struct BusinessPhotoButton: View {
     let disabled: Bool
-    let onPick: (Data) -> Void
-    @State private var item: PhotosPickerItem?
+    let maxCount: Int
+    let onPick: ([Data]) -> Void
+    @State private var items: [PhotosPickerItem] = []
 
-    init(disabled: Bool, onPick: @escaping (Data) -> Void) {
+    init(disabled: Bool, maxCount: Int, onPick: @escaping ([Data]) -> Void) {
         self.disabled = disabled
+        self.maxCount = maxCount
         self.onPick = onPick
     }
 
     var body: some View {
-        PhotosPicker(selection: $item, matching: .images) {
-            Label("Choose a photo", systemImage: "photo")
+        PhotosPicker(selection: $items, maxSelectionCount: maxCount, matching: .images) {
+            Label("Choose photos", systemImage: "photo")
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .foregroundColor(brandColor)
                 .background(RoundedRectangle(cornerRadius: 10).stroke(brandColor, lineWidth: 1.5))
         }
         .disabled(disabled)
-        .onChange(of: item) { newItem in
-            guard let newItem = newItem else { return }
+        .onChange(of: items) { picked in
+            guard !picked.isEmpty else { return }
             Task {
-                if let data = try? await newItem.loadTransferable(type: Data.self),
-                   let jpeg = UIImage(data: data)?.jpegData(compressionQuality: 0.8) {
-                    onPick(jpeg)
+                var photos: [Data] = []
+                for item in picked {
+                    if let data = try? await item.loadTransferable(type: Data.self),
+                       let jpeg = UIImage(data: data)?.jpegData(compressionQuality: 0.8) {
+                        photos.append(jpeg)
+                    }
                 }
-                item = nil
+                if !photos.isEmpty { onPick(photos) }
+                items = []
             }
         }
     }

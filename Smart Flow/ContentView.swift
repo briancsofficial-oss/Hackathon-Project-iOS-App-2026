@@ -98,7 +98,7 @@ struct CopyrightPrivacyView: View {
                 Text("Privacy")
                     .font(.headline)
                     .padding(.top, 8)
-                Text("Everything you enter (profile details and business answers) is saved on this device. Your password is never stored as plain text; only a scrambled fingerprint of it is kept in the iPhone Keychain, and your OpenAI API key is kept in the Keychain too. Face ID is checked by iOS; the app never sees your face data. When you use an AI feature, the information it needs is sent to OpenAI: the AI interview sends your messages and business answers, document import sends the file or photo you pick or take, and the action plan sends your answers and results. The camera is used only when you choose to take a picture of a document. Nothing else is sent to any server. Bluetooth permission is used only to show whether Bluetooth is turned on. Deleting the app deletes all of its saved data.")
+                Text("Everything you enter (profile details and business answers) is saved on this device. Your password is never stored as plain text; only a scrambled fingerprint of it is kept in the iPhone Keychain, and your OpenAI API key is kept in the Keychain too. Face ID is checked by iOS; the app never sees your face data. When you use an AI feature, the information it needs is sent to OpenAI: the AI interview sends your messages and business answers, document import sends the files or photos you pick or take (up to 10 at a time), and the action plan sends your answers and results. The camera is used only when you choose to take a picture of a document. Nothing else is sent to any server. Bluetooth permission is used only to show whether Bluetooth is turned on. Deleting the app deletes all of its saved data.")
             }
             .font(.subheadline)
             .padding()
@@ -266,7 +266,7 @@ struct HelpView: View {
         HelpTopic(question: "The AI shows an error",
                   answer: "• Check that the phone is online (Settings > This device).\n• \"Didn't accept the API key\" means the key is wrong or was revoked: save a new one in Settings > AI keys.\n• \"Rate-limiting\" means too many requests or no credit left. Wait a minute or add credit.\n• Your answers are saved as you go, so tap Try again or restart the interview without losing anything."),
         HelpTopic(question: "Import didn't find my numbers",
-                  answer: "• Clear, full-page PDFs work best. For photos (picked or taken with the camera), use good light and keep the whole page in view.\n• Files must be under 15 MB.\n• Anything it can't find can be typed in on Overview > Answer the questions."),
+                  answer: "• Clear, full-page PDFs work best. For photos (picked or taken with the camera), use good light and keep the whole page in view.\n• You can pick up to 10 files or photos at once. Each must be under 15 MB, and all together under 50 MB.\n• Anything it can't find can be typed in on Overview > Questions."),
         HelpTopic(question: "My results look wrong",
                   answer: "• Unanswered questions count as $0. Overview shows which phases still have questions left.\n• Fields marked / mo are monthly amounts; revenue is for the last 12 months. You can fix any answer on Overview > Phases."),
         HelpTopic(question: "My answers disappeared",

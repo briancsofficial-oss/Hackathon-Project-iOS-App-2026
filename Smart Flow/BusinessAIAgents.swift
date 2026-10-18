@@ -229,9 +229,9 @@ enum BusinessDocumentReader {
         BusinessField.allCases.filter { $0.kind.isNumber && $0.phase != .goals }
     }
 
-    static func read(_ attachment: AIAttachment) async throws -> DocumentFindings {
+    static func read(_ attachments: [AIAttachment]) async throws -> DocumentFindings {
         var properties: [String: Any] = [
-            "document_type": ["type": "string", "description": "e.g. Profit and loss statement, Bank statement, Payroll register, Balance sheet"],
+            "document_type": ["type": "string", "description": "e.g. Profit and loss statement, Bank statement, Payroll register, Balance sheet. If there are several documents, name each type briefly."],
             "notes": ["type": "string", "description": "One or two sentences: the period covered and any caveats."],
         ]
         for field in readableFields {
@@ -246,7 +246,8 @@ enum BusinessDocumentReader {
 
         let system = """
         You extract small-business financial figures from documents for a budgeting app.
-        Only fill a field when the document clearly supports it. Use null for anything you would have to guess.
+        You may get several documents at once. Combine them into one set of answers; when they overlap, use the most recent and most complete one.
+        Only fill a field when the documents clearly support it. Use null for anything you would have to guess.
         Units: fields starting with monthly_ are per month (average a multi-month period; divide yearly totals by 12). \
         annual_revenue is a 12-month total (annualize a shorter period and say so in notes). Percent fields are 0-100. \
         Balances are as of the document's end date. Use plain numbers with no currency symbols.
@@ -254,9 +255,9 @@ enum BusinessDocumentReader {
         """
 
         let text = try await OpenAIClient.generate(
-            prompt: "Extract the figures from this document.",
+            prompt: attachments.count == 1 ? "Extract the figures from this document." : "Extract the figures from these \(attachments.count) documents.",
             instructions: system,
-            attachments: [attachment],
+            attachments: attachments,
             jsonSchema: (name: "business_figures", schema: schema),
             model: AIFeature.documentImport.model)
 
