@@ -949,6 +949,12 @@ struct BusinessResultsView: View {
             VStack(spacing: 20) {
                 headerCard
 
+                NavigationLink(destination: WhatIfView()) {
+                    BusinessRowLabel(title: "What-if simulator", subtitle: "Test sales, cost and debt changes", icon: "slider.horizontal.3")
+                        .background(RoundedRectangle(cornerRadius: 16).fill(brandColor))
+                }
+                .buttonStyle(.plain)
+
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                     BusinessMetricTile(title: "Debt coverage (DSCR)",
                                        value: m.dscr.map { String(format: "%.2fx", $0) } ?? (m.debtService == 0 ? "No debt" : "—"),
@@ -963,12 +969,6 @@ struct BusinessResultsView: View {
                                        value: m.currentRatio.map { String(format: "%.2f", $0) } ?? (m.currentLiabilities == 0 ? "No bills" : "—"),
                                        caption: "Short-term assets ÷ debts", rating: m.currentRatioRating)
                 }
-
-                NavigationLink(destination: WhatIfView()) {
-                    BusinessRowLabel(title: "What-if simulator", subtitle: "Test sales, cost and debt changes", icon: "slider.horizontal.3")
-                        .background(RoundedRectangle(cornerRadius: 16).fill(brandColor))
-                }
-                .buttonStyle(.plain)
 
                 AccountSection(title: "Monthly cash flow") {
                     VStack(spacing: 10) {

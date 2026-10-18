@@ -10,7 +10,7 @@ Update this when you start or finish a task. Put your name next to what you're w
 - [ ] Replace the deprecated `onChange(of:perform:)` calls in `BusinessViews.swift` (lines ~209, 256, 261, 810)
 
 ## Done
-- [x] What-if simulator, break-even thresholds and driver breakdown (README §4, §5, §7), opened from the Results tab — Brian Sanchez with Claude (2026-10-17)
+- [x] What-if simulator, break-even thresholds and driver breakdown (README §4, §5, §7), opened from the top of the Results tab, under the business name — Brian Sanchez with Claude (2026-10-17)
 - [x] Added the `Smart FlowTests` unit test target, starting with the scenario engine (2026-10-17)
 - [x] Removed Plaid bank linking; document import now supports upload, photo library and camera (2026-10-17)
 - [x] Added CLAUDE.md, PLAN.md and docs/decisions.md as the shared knowledge base (2026-10-17)
