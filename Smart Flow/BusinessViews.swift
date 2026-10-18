@@ -1237,7 +1237,7 @@ struct AISettingsForm: View {
                 } header: {
                     Text("Model used by each feature")
                 } footer: {
-                    Text("Your key is kept in this iPhone's Keychain. When you use an AI feature, your business answers (or the document you picked) are sent to OpenAI to be processed.")
+                    Text("Your key is kept in this iPhone's Keychain. When you use an AI feature, your business answers (or the documents you picked) are sent to OpenAI to be processed.")
                 }
             }
             .creamListBackground()

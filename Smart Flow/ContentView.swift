@@ -68,7 +68,29 @@ struct AppInfoView: View {
                     .foregroundColor(brandColor)
                 Text("Version \(version)")
                     .foregroundColor(.secondary)
-                Text("Copyright © 2026, BrianSanchez LLC. All rights reserved.\n\nCreated in Xcode with Swift, using Apple SDKs. Any trademarks therein are registered in the U.S. and other countries.")
+                Text("A small-business financial checkup built for the UWGB Hackathon.")
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
+
+                VStack(spacing: 6) {
+                    Text("Lead developer")
+                        .font(.caption).foregroundColor(.secondary)
+                    Text("Brian Sanchez")
+                        .font(.headline)
+                    Text("Team")
+                        .font(.caption).foregroundColor(.secondary)
+                        .padding(.top, 8)
+                    Text("Chaewon · Jasmin · Sarah")
+                        .font(.headline)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 16).fill(cardBackground))
+                .padding(.horizontal)
+
+                Text("Copyright © 2026 UWGB Hackathon Group. All rights reserved.\n\nBuilt in Xcode with Swift and Apple SDKs. AI features use the OpenAI API. Apple, Face ID and OpenAI are trademarks of their respective owners.")
                     .font(.footnote)
                     .multilineTextAlignment(.center)
                     .foregroundColor(.secondary)
@@ -86,19 +108,24 @@ struct CopyrightPrivacyView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Copyright and Educational Project Notice")
+                Text("Copyright")
                     .font(.headline)
-                Text("© 2026 Brian Sanchez. All rights reserved in original material, subject to applicable law and third-party licenses.")
-                Text("This application was created by Brian Sanchez in 2026 using the Swift programming language as an educational project at the University of Wisconsin–Green Bay. Its purpose is to demonstrate software development skills and explore banking application interfaces and functionality.")
-                Text("Certain aspects of this application were inspired by existing banking applications for educational study. Similarities may reflect common interface conventions, educational exploration, or coincidence. No affiliation with, sponsorship by, or endorsement from any bank, financial institution, or other application developer is claimed or implied. Reference to the University of Wisconsin–Green Bay identifies the academic context of the project and does not imply university endorsement.")
-                Text("Copyright is claimed only in original code, text, graphics, and other protectable material authored and owned by Brian Sanchez. Any third-party code, images, names, logos, trademarks, or other materials remain the property of their respective owners and are subject to applicable licenses and legal protections. This notice does not grant permission to use third-party material.")
-                Text("U.S. copyright law protects original expression, subject to statutory limitations and exceptions. Fair use under 17 U.S.C. § 107 requires a case-specific assessment of the purpose and character of the use, the nature of the copyrighted work, the amount and substantiality used, and the effect on the potential market for the original work. An educational purpose alone does not establish fair use. This notice does not assert that every use of third-party material qualifies as fair use.")
-                Text("This application is intended as an educational demonstration and should not be relied upon for banking services, financial advice, or real financial transactions.")
+                Text("© 2026 UWGB Hackathon Group. Lead developer: Brian Sanchez. Team: Chaewon, Jasmin and Sarah. All rights reserved in the original code, text and design of Smart Flow.")
+                Text("Smart Flow was created at the University of Wisconsin–Green Bay Hackathon as an educational project. It helps small-business owners check their finances: cash flow, cash runway, debt coverage and payroll share, with an AI interview, document import and an AI-written action plan. Naming the University of Wisconsin–Green Bay identifies where the project was made and does not imply university endorsement.")
+                Text("Smart Flow is not affiliated with, sponsored by or endorsed by OpenAI, Apple, any bank or any other financial institution. Third-party names, trademarks, code and services belong to their owners and are used under their own terms.")
+
+                Text("Not financial advice")
+                    .font(.headline)
+                    .padding(.top, 8)
+                Text("Smart Flow gives educational estimates only. Its numbers depend on the answers you enter, and unanswered questions count as $0. AI suggestions, document readings and action plans can be wrong or incomplete, so check them before relying on them. For tax, legal, lending or investment decisions, talk to a CPA or a qualified advisor. Smart Flow does not move money or connect to bank accounts.")
 
                 Text("Privacy")
                     .font(.headline)
                     .padding(.top, 8)
-                Text("Everything you enter (profile details and business answers) is saved on this device. Your password is never stored as plain text; only a scrambled fingerprint of it is kept in the iPhone Keychain, and your OpenAI API key is kept in the Keychain too. Face ID is checked by iOS; the app never sees your face data. When you use an AI feature, the information it needs is sent to OpenAI: the AI interview sends your messages and business answers, document import sends the files or photos you pick or take (up to 10 at a time), and the action plan sends your answers and results. The camera is used only when you choose to take a picture of a document. Nothing else is sent to any server. Bluetooth permission is used only to show whether Bluetooth is turned on. Deleting the app deletes all of its saved data.")
+                Text("What stays on your iPhone: your profile details, business answers, your latest action plan and app settings are saved only on this device. Your password is never stored as plain text; only a scrambled fingerprint of it is kept in the iPhone Keychain, along with your OpenAI API key. Face ID is checked by iOS; Smart Flow never sees your face data.")
+                Text("What is sent to OpenAI, and only when you use an AI feature: the AI interview sends your messages and business answers; document import sends the files or photos you pick or take (up to 10 at a time); the action plan sends your answers and the results Smart Flow calculated. OpenAI handles this data under its own terms and privacy policy. Nothing else is sent to any server, and Smart Flow has no account system, ads or analytics.")
+                Text("Permissions: the camera is used only when you choose to take a picture of a document, and only the photos you pick are read. Wi-Fi and Bluetooth status are checked on the device just to show them in Settings.")
+                Text("Your control: Settings > Clear all business answers erases your answers, Settings > AI key (OpenAI) lets you remove your key, and deleting the app deletes everything it saved. Cover account numbers and personal details before importing a document.")
             }
             .font(.subheadline)
             .padding()
@@ -262,21 +289,29 @@ struct HelpView: View {
         HelpTopic(question: "I can't log in",
                   answer: "• Username and password are case-sensitive, so check for capital letters.\n• Make sure there are no extra spaces at the end of the password.\n• If you changed your password and forgot it, deleting and reinstalling the app resets it to the original password (this also erases your saved data)."),
         HelpTopic(question: "The AI features say to add a key",
-                  answer: "• Go to Settings > AI keys and paste your OpenAI API key. One key runs the interview, document import and action plan.\n• Keys come from platform.openai.com > API keys. The account needs billing or credit turned on."),
+                  answer: "• Go to Settings > AI key (OpenAI) and paste your OpenAI API key. One key runs the AI interview, document import and action plan.\n• Keys come from platform.openai.com > API keys. The account needs billing or credit turned on."),
         HelpTopic(question: "The AI shows an error",
-                  answer: "• Check that the phone is online (Settings > This device).\n• \"Didn't accept the API key\" means the key is wrong or was revoked: save a new one in Settings > AI keys.\n• \"Rate-limiting\" means too many requests or no credit left. Wait a minute or add credit.\n• Your answers are saved as you go, so tap Try again or restart the interview without losing anything."),
+                  answer: "• Check that the phone is online (Settings > This device).\n• \"Didn't accept the API key\" means the key is wrong or was revoked: save a new one in Settings > AI key (OpenAI).\n• \"Rate-limiting\" means too many requests or no credit left. Wait a minute or add credit.\n• Your answers are saved as you go, so tap Try again or restart the interview without losing anything."),
+        HelpTopic(question: "How do I add my cash on hand?",
+                  answer: "• On the Overview, tap Add cash on hand on the Cash runway card. Tap Update cash on hand to change it later.\n• The runway also needs your monthly costs. If they're missing, tap Add monthly costs, or answer them in Interview > Phases."),
+        HelpTopic(question: "How do I see daily or yearly cash flow?",
+                  answer: "• Tap the Monthly button in the top-right corner of the cash flow card on the Overview and choose Daily, Monthly or Yearly.\n• Smart Flow converts your monthly numbers: yearly is 12 months, daily is a 365-day average."),
         HelpTopic(question: "Import didn't find my numbers",
                   answer: "• Clear, full-page PDFs work best. For photos (picked or taken with the camera), use good light and keep the whole page in view.\n• You can pick up to 10 files or photos at once. Each must be under 15 MB, and all together under 50 MB.\n• Anything it can't find can be typed in on Overview > Questions."),
+        HelpTopic(question: "I don't see the Take a photo button",
+                  answer: "• It appears only on an iPhone with a camera, not in the Simulator.\n• If you said no to camera access, turn it on in the iPhone's Settings > Smart Flow > Camera."),
+        HelpTopic(question: "The action plan has no charts",
+                  answer: "• Charts appear only where they help explain a step, up to 3 per plan.\n• Smart Flow draws them from your own numbers, so a chart is skipped when its numbers are missing. Answer more questions, then tap Regenerate plan on the Results tab.\n• Plans written before this update have no charts. Regenerate to get the new format."),
         HelpTopic(question: "My results look wrong",
-                  answer: "• Unanswered questions count as $0. Overview shows which phases still have questions left.\n• Fields marked / mo are monthly amounts; revenue is for the last 12 months. You can fix any answer on Overview > Phases."),
+                  answer: "• Unanswered questions count as $0. Interview > Phases shows which phases still have questions left.\n• Amounts marked / mo are monthly; revenue is for the last 12 months. You can fix any answer in Interview > Phases."),
         HelpTopic(question: "My answers disappeared",
                   answer: "• Answers are saved on this phone only, so they won't appear on another device.\n• Deleting or reinstalling the app, or Settings > Clear all business answers, erases them."),
         HelpTopic(question: "The keyboard won't go away",
                   answer: "• Tap Done in the bar just above the keyboard."),
         HelpTopic(question: "Face ID doesn't show up",
-                  answer: "• Turn it on in Settings > Profile & Settings > Log in with Face ID.\n• Make sure Face ID is set up in the iPhone's Settings > Face ID & Passcode, and that Smart Flow is allowed to use it.\n• In the Simulator, choose Features > Face ID > Enrolled."),
+                  answer: "• Turn it on in Settings > Profile & Settings > Log in with Face ID.\n• Make sure Face ID is set up in the iPhone's Settings > Face ID & Passcode, and that Smart Flow is allowed to use it."),
         HelpTopic(question: "The app is frozen or acting strange",
-                  answer: "• Swipe up from the bottom of the screen (or double-press Home), swipe the app away, then reopen it.\n• Restart your iPhone.\n• Make sure iOS is up to date in Settings > General > Software Update.")
+                  answer: "• Swipe up from the bottom of the screen and swipe the app away, then reopen it.\n• Restart your iPhone.\n• Make sure iOS is up to date in Settings > General > Software Update.")
     ]
 
     var body: some View {
