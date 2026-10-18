@@ -964,6 +964,12 @@ struct BusinessResultsView: View {
                                        caption: "Short-term assets ÷ debts", rating: m.currentRatioRating)
                 }
 
+                NavigationLink(destination: WhatIfView()) {
+                    BusinessRowLabel(title: "What-if simulator", subtitle: "Test sales, cost and debt changes", icon: "slider.horizontal.3")
+                        .background(RoundedRectangle(cornerRadius: 16).fill(brandColor))
+                }
+                .buttonStyle(.plain)
+
                 AccountSection(title: "Monthly cash flow") {
                     VStack(spacing: 10) {
                         flowRow("Revenue", m.monthlyRevenue)

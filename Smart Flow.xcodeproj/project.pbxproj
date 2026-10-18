@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C0C1000000000000000000A1 /* BusinessScenarioTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C1000000000000000000B1 /* BusinessScenarioTests.swift */; };
 		42BC70DCD5543540B0004400 /* BiometricAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8E63192C73A05351484EC7 /* BiometricAuth.swift */; };
 		636FF35C27BA1B6B00F9DC41 /* SmartFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636FF35B27BA1B6B00F9DC41 /* SmartFlowApp.swift */; };
 		636FF35E27BA1B6B00F9DC41 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636FF35D27BA1B6B00F9DC41 /* ContentView.swift */; };
@@ -18,11 +19,24 @@
 		B0B1000000000000000000A4 /* BusinessViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B1000000000000000000B4 /* BusinessViews.swift */; };
 		B0B1000000000000000000A5 /* CashSplitChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B1000000000000000000B5 /* CashSplitChart.swift */; };
 		B0B1000000000000000000A7 /* OverviewCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B1000000000000000000B7 /* OverviewCharts.swift */; };
+		B0B1000000000000000000A9 /* WhatIfView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0B1000000000000000000B9 /* WhatIfView.swift */; };
 		D3F92B8730658D970036A986 /* Bluetooth Monitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F92B8630658D900036A986 /* Bluetooth Monitor.swift */; };
 		D3F92B9030658E000036A986 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F92B7C3065839D0036A986 /* NetworkMonitor.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		C0C1000000000000000000E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 636FF35027BA1B6B00F9DC41 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 636FF35727BA1B6B00F9DC41;
+			remoteInfo = "Smart Flow";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		C0C1000000000000000000B1 /* BusinessScenarioTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessScenarioTests.swift; sourceTree = "<group>"; };
+		C0C1000000000000000000B2 /* Smart FlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Smart FlowTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		636FF35827BA1B6B00F9DC41 /* Smart Flow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Smart Flow.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		636FF35B27BA1B6B00F9DC41 /* SmartFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFlowApp.swift; sourceTree = "<group>"; };
 		636FF35D27BA1B6B00F9DC41 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -35,12 +49,20 @@
 		B0B1000000000000000000B5 /* CashSplitChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CashSplitChart.swift; sourceTree = "<group>"; };
 		B0B1000000000000000000B7 /* OverviewCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewCharts.swift; sourceTree = "<group>"; };
 		B0B1000000000000000000B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B0B1000000000000000000B9 /* WhatIfView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatIfView.swift; sourceTree = "<group>"; };
 		D3F92B7C3065839D0036A986 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		D3F92B8630658D900036A986 /* Bluetooth Monitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bluetooth Monitor.swift"; sourceTree = "<group>"; };
 		EE8E63192C73A05351484EC7 /* BiometricAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuth.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C0C1000000000000000000F2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		636FF35527BA1B6B00F9DC41 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -55,6 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				636FF35A27BA1B6B00F9DC41 /* Smart Flow */,
+				C0C1000000000000000000C1 /* Smart FlowTests */,
 				636FF35927BA1B6B00F9DC41 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -63,6 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				636FF35827BA1B6B00F9DC41 /* Smart Flow.app */,
+				C0C1000000000000000000B2 /* Smart FlowTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -79,6 +103,7 @@
 				B0B1000000000000000000B4 /* BusinessViews.swift */,
 				B0B1000000000000000000B8 /* Info.plist */,
 				B0B1000000000000000000B7 /* OverviewCharts.swift */,
+				B0B1000000000000000000B9 /* WhatIfView.swift */,
 				B0B1000000000000000000B5 /* CashSplitChart.swift */,
 				B0B1000000000000000000B3 /* BusinessAIAgents.swift */,
 				B0B1000000000000000000B2 /* AIServices.swift */,
@@ -94,6 +119,14 @@
 				636FF36227BA1B6C00F9DC41 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		C0C1000000000000000000C1 /* Smart FlowTests */ = {
+			isa = PBXGroup;
+			children = (
+				C0C1000000000000000000B1 /* BusinessScenarioTests.swift */,
+			);
+			path = "Smart FlowTests";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -118,6 +151,24 @@
 			productReference = 636FF35827BA1B6B00F9DC41 /* Smart Flow.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C0C1000000000000000000D1 /* Smart FlowTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0C1000000000000000000D9 /* Build configuration list for PBXNativeTarget "Smart FlowTests" */;
+			buildPhases = (
+				C0C1000000000000000000F1 /* Sources */,
+				C0C1000000000000000000F2 /* Frameworks */,
+				C0C1000000000000000000F3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C0C1000000000000000000E2 /* PBXTargetDependency */,
+			);
+			name = "Smart FlowTests";
+			productName = "Smart FlowTests";
+			productReference = C0C1000000000000000000B2 /* Smart FlowTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -130,6 +181,10 @@
 				TargetAttributes = {
 					636FF35727BA1B6B00F9DC41 = {
 						CreatedOnToolsVersion = 13.2.1;
+					};
+					C0C1000000000000000000D1 = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = 636FF35727BA1B6B00F9DC41;
 					};
 				};
 			};
@@ -149,11 +204,19 @@
 			projectRoot = "";
 			targets = (
 				636FF35727BA1B6B00F9DC41 /* Smart Flow */,
+				C0C1000000000000000000D1 /* Smart FlowTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C0C1000000000000000000F3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		636FF35627BA1B6B00F9DC41 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -166,6 +229,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C0C1000000000000000000F1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0C1000000000000000000A1 /* BusinessScenarioTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		636FF35427BA1B6B00F9DC41 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -177,6 +248,7 @@
 				42BC70DCD5543540B0004400 /* BiometricAuth.swift in Sources */,
 				B0B1000000000000000000A4 /* BusinessViews.swift in Sources */,
 				B0B1000000000000000000A7 /* OverviewCharts.swift in Sources */,
+				B0B1000000000000000000A9 /* WhatIfView.swift in Sources */,
 				B0B1000000000000000000A5 /* CashSplitChart.swift in Sources */,
 				B0B1000000000000000000A3 /* BusinessAIAgents.swift in Sources */,
 				B0B1000000000000000000A2 /* AIServices.swift in Sources */,
@@ -185,6 +257,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C0C1000000000000000000E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 636FF35727BA1B6B00F9DC41 /* Smart Flow */;
+			targetProxy = C0C1000000000000000000E1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		636FF36427BA1B6C00F9DC41 /* Debug */ = {
@@ -377,6 +457,42 @@
 			};
 			name = Release;
 		};
+		C0C1000000000000000000D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briansanchez.smartflow.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Smart Flow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Smart Flow";
+			};
+			name = Debug;
+		};
+		C0C1000000000000000000D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briansanchez.smartflow.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Smart Flow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Smart Flow";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -394,6 +510,15 @@
 			buildConfigurations = (
 				636FF36727BA1B6C00F9DC41 /* Debug */,
 				636FF36827BA1B6C00F9DC41 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0C1000000000000000000D9 /* Build configuration list for PBXNativeTarget "Smart FlowTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0C1000000000000000000D7 /* Debug */,
+				C0C1000000000000000000D8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

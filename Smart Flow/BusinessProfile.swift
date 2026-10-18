@@ -520,3 +520,105 @@ struct BusinessMetrics {
         """
     }
 }
+
+extension BusinessMetrics {
+    var materialCostBreakEvenPercent: Double? {
+        guard monthlyCOGS > 0 else { return nil }
+        return max(netCashFlow, 0) / monthlyCOGS * 100
+    }
+
+    var revenueDeclineBreakEvenPercent: Double? {
+        let marginDollars = monthlyRevenue - monthlyCOGS
+        guard marginDollars > 0 else { return nil }
+        return max(netCashFlow, 0) / marginDollars * 100
+    }
+
+    func reserveHeadroom(above target: Double) -> Double { p[.cashOnHand] - target }
+
+    func monthsUntilCash(below target: Double) -> Double? {
+        let headroom = reserveHeadroom(above: target)
+        if headroom < 0 { return 0 }
+        guard netCashFlow < 0 else { return nil }
+        return headroom / -netCashFlow
+    }
+}
+
+struct BusinessScenario: Equatable {
+    var materialCostChange: Double = 0
+    var revenueChange: Double = 0
+    var oneTimeExpense: Double = 0
+    var debtPaymentChange: Double = 0
+
+    enum Driver: String, CaseIterable, Identifiable {
+        case materialCost = "Material costs"
+        case revenue = "Revenue"
+        case oneTimeExpense = "One-time expense"
+        case debtPayment = "Debt payments"
+        var id: Self { self }
+    }
+
+    struct DriverImpact {
+        let driver: Driver
+        let monthlyCashFlow: Double
+        let cash: Double
+    }
+
+    private static let debtFields: [BusinessField] = [.termLoanPayment, .locPayment, .equipmentPayment, .cardMinimum, .mcaPayment]
+
+    var isBaseline: Bool { self == BusinessScenario() }
+
+    func only(_ driver: Driver) -> BusinessScenario {
+        var s = BusinessScenario()
+        switch driver {
+        case .materialCost:   s.materialCostChange = materialCostChange
+        case .revenue:        s.revenueChange = revenueChange
+        case .oneTimeExpense: s.oneTimeExpense = oneTimeExpense
+        case .debtPayment:    s.debtPaymentChange = debtPaymentChange
+        }
+        return s
+    }
+
+    func applied(to profile: BusinessProfile) -> BusinessProfile {
+        var p = profile
+        if revenueChange != 0, profile.isAnswered(.annualRevenue) {
+            p.numbers[BusinessField.annualRevenue.rawValue] = max(profile[.annualRevenue] * (1 + revenueChange / 100), 0)
+        }
+        if materialCostChange != 0, profile.isAnswered(.cogsPercent) {
+            p.numbers[BusinessField.cogsPercent.rawValue] = max(profile[.cogsPercent] * (1 + materialCostChange / 100), 0)
+        }
+        if oneTimeExpense != 0 {
+            p.numbers[BusinessField.cashOnHand.rawValue] = max(profile[.cashOnHand] - oneTimeExpense, 0)
+        }
+        if debtPaymentChange != 0 {
+            let current = BusinessMetrics(p: profile).debtService
+            let target = max(current + debtPaymentChange, 0)
+            if current > 0 {
+                for field in Self.debtFields where profile[field] > 0 {
+                    p.numbers[field.rawValue] = profile[field] * target / current
+                }
+            } else {
+                p.numbers[BusinessField.termLoanPayment.rawValue] = target
+            }
+        }
+        return p
+    }
+
+    func cashShortfall(for profile: BusinessProfile) -> Double {
+        max(oneTimeExpense - profile[.cashOnHand], 0)
+    }
+
+    func netCashFlowChange(on profile: BusinessProfile) -> Double {
+        BusinessMetrics(p: applied(to: profile)).netCashFlow - BusinessMetrics(p: profile).netCashFlow
+    }
+
+    func driverImpacts(on profile: BusinessProfile) -> [DriverImpact] {
+        let base = BusinessMetrics(p: profile)
+        return Driver.allCases.map { driver in
+            let changed = BusinessMetrics(p: only(driver).applied(to: profile))
+            return DriverImpact(driver: driver,
+                                monthlyCashFlow: changed.netCashFlow - base.netCashFlow,
+                                cash: changed.p[.cashOnHand] - base.p[.cashOnHand])
+        }
+        .sorted { abs($0.monthlyCashFlow) > abs($1.monthlyCashFlow) }
+    }
+}
